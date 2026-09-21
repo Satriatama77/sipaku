@@ -1,0 +1,29 @@
+// Data SSH untuk frontend (sinkron dengan backend/app/data/ssh_lamongan.json)
+// Digunakan untuk preview disparitas tanpa perlu request ke API
+const sshLamongan = [
+  { nama_material: "Semen Gresik 40kg",       satuan: "zak",    harga_ssh: 58000  },
+  { nama_material: "Semen Tiga Roda 40kg",    satuan: "zak",    harga_ssh: 57000  },
+  { nama_material: "Semen Holcim 40kg",       satuan: "zak",    harga_ssh: 57500  },
+  { nama_material: "Besi Beton Polos Ø8mm",   satuan: "batang", harga_ssh: 42000  },
+  { nama_material: "Besi Beton Polos Ø10mm",  satuan: "batang", harga_ssh: 65000  },
+  { nama_material: "Besi Beton Polos Ø12mm",  satuan: "batang", harga_ssh: 93000  },
+  { nama_material: "Besi Beton Ulir Ø10mm",   satuan: "batang", harga_ssh: 68000  },
+  { nama_material: "Besi Beton Ulir Ø12mm",   satuan: "batang", harga_ssh: 97000  },
+  { nama_material: "Pasir Urug",              satuan: "m3",     harga_ssh: 135000 },
+  { nama_material: "Pasir Pasang",            satuan: "m3",     harga_ssh: 185000 },
+  { nama_material: "Pasir Beton",             satuan: "m3",     harga_ssh: 200000 },
+  { nama_material: "Kerikil / Batu Pecah",    satuan: "m3",     harga_ssh: 220000 },
+  { nama_material: "Batu Bata Merah",         satuan: "buah",   harga_ssh: 900    },
+  { nama_material: "Batako Pres",             satuan: "buah",   harga_ssh: 3500   },
+  { nama_material: "Keramik 40x40 (polos)",   satuan: "m2",     harga_ssh: 65000  },
+  { nama_material: "Keramik 60x60 (polos)",   satuan: "m2",     harga_ssh: 95000  },
+  { nama_material: "Triplek 9mm 122x244",     satuan: "lembar", harga_ssh: 185000 },
+  { nama_material: "Baja Ringan (kanal C)",   satuan: "batang", harga_ssh: 88000  },
+  { nama_material: "Genteng Beton",           satuan: "buah",   harga_ssh: 8500   },
+  { nama_material: "Cat Tembok (5kg)",        satuan: "kaleng", harga_ssh: 95000  },
+  { nama_material: "Pipa PVC 4\" AW",         satuan: "batang", harga_ssh: 95000  },
+  { nama_material: "Kayu Kaso 5x7",           satuan: "batang", harga_ssh: 35000  },
+  { nama_material: "Kayu Papan 3x20",         satuan: "batang", harga_ssh: 55000  },
+]
+
+export default sshLamongan
