@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { submitLaporan } from '../../services/laporanService'
 import { useDisparitas } from '../../hooks/useDisparitas'
 import kecamatanData from '../../data/kecamatan_lamongan.json'
@@ -8,7 +9,16 @@ const WRAP  = { padding: '24px 32px', maxWidth: 700, margin: '0 auto' }
 const INPUT = { width: '100%', padding: '10px 12px', background: '#0f172a', border: '1px solid #334155', borderRadius: 8, color: '#f8fafc', fontSize: 14, boxSizing: 'border-box', marginTop: 6, marginBottom: 16 }
 
 export default function LaporHargaPage() {
-  const [form, setForm] = useState({ id_kecamatan: '', nama_toko: '', nama_material: '', harga_temuan: '', satuan: '' })
+  const location = useLocation()
+  const prefill = location.state || {}
+
+  const [form, setForm] = useState({
+    id_kecamatan: prefill.id_kecamatan || '',
+    nama_toko: prefill.nama_toko || '',
+    nama_material: prefill.nama_material || '',
+    harga_temuan: prefill.harga_temuan ? String(prefill.harga_temuan) : '',
+    satuan: prefill.satuan || '',
+  })
   const [sukses, setSukses] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError]   = useState('')
@@ -23,7 +33,12 @@ export default function LaporHargaPage() {
     setLoading(true)
     setError('')
     try {
-      await submitLaporan({ ...form, id_kecamatan: Number(form.id_kecamatan), harga_temuan: Number(form.harga_temuan) })
+      await submitLaporan({
+        ...form,
+        id_kecamatan: Number(form.id_kecamatan),
+        harga_temuan: Number(form.harga_temuan),
+        satuan: form.satuan || selectedSSH?.satuan || 'satuan',
+      })
       setSukses(true)
     } catch {
       setError('Gagal mengirim laporan. Coba lagi.')
@@ -34,11 +49,20 @@ export default function LaporHargaPage() {
 
   if (sukses) return (
     <div style={{ background: '#0f172a', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f8fafc' }}>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 48 }}>✅</div>
-        <h2 style={{ color: '#34d399' }}>Laporan Berhasil Dikirim!</h2>
-        <p style={{ color: '#64748b' }}>Terima kasih telah berpartisipasi dalam pengawasan harga material.</p>
-        <button onClick={() => setSukses(false)} style={{ marginTop: 16, padding: '10px 24px', background: '#0ea5e9', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer' }}>Lapor Lagi</button>
+      <div style={{ textAlign: 'center', background: '#1e293b', padding: 40, borderRadius: 16, border: '1px solid #334155', maxWidth: 460 }}>
+        <div style={{ fontSize: 48, marginBottom: 12 }}>✅</div>
+        <h2 style={{ color: '#34d399', margin: '0 0 8px' }}>Laporan Berhasil Dikirim!</h2>
+        <p style={{ color: '#94a3b8', margin: 0, fontSize: 14 }}>
+          Terima kasih telah berpartisipasi dalam pengawasan transparansi harga material konstruksi di Kabupaten Lamongan. Laporan Anda segera ditinjau oleh Dinas PU.
+        </p>
+        <div style={{ marginTop: 24, display: 'flex', gap: 12, justifyContent: 'center' }}>
+          <button onClick={() => setSukses(false)} style={{ padding: '10px 18px', background: '#334155', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+            Lapor Lagi
+          </button>
+          <Link to="/pembeli" style={{ padding: '10px 18px', background: '#0ea5e9', color: '#fff', textDecoration: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600 }}>
+            Ke Dasbor Harga
+          </Link>
+        </div>
       </div>
     </div>
   )

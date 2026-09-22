@@ -1,8 +1,5 @@
-from fastapi import FastAPI
-import mysql.connector
-
-# Inisialisasi Aplikasi FastAPI
-app = FastAPI(title="API SIPAKU - Harga Konstruksi")
+# Import aplikasi utama dari app.main agar perintah `uvicorn main:app` dan `uvicorn app.main:app` bekerja sama baiknya
+from app.main import app
 
 # Fungsi untuk membuka koneksi ke database MySQL (XAMPP)
 def get_db_connection():

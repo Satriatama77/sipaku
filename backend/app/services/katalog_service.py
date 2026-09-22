@@ -6,8 +6,39 @@ def ambil_katalog_toko(conn, id_toko: int) -> list[dict]:
     """Ambil semua item katalog harga milik toko tertentu."""
     cursor = get_cursor(conn)
     cursor.execute(
-        "SELECT k.*, t.nama_toko FROM katalog_harga k JOIN toko_bangunan t ON k.id_toko = t.id WHERE k.id_toko = %s",
+        "SELECT k.*, t.nama_toko FROM katalog_harga k JOIN toko_bangunan t ON k.id_toko = t.id_toko WHERE k.id_toko = %s ORDER BY k.nama_material ASC",
         (id_toko,)
+    )
+    data = cursor.fetchall()
+    cursor.close()
+    return data
+
+def ambil_semua_katalog_pasar(conn) -> list[dict]:
+    """Ambil semua item katalog dari seluruh toko beserta info toko dan kecamatan."""
+    cursor = get_cursor(conn)
+    cursor.execute(
+        """SELECT k.id_katalog, k.id_toko, k.nama_material, k.harga_jual, k.satuan, 
+                  k.stok_tersedia, k.terakhir_diperbarui,
+                  t.nama_toko, t.nama_pemilik, t.id_kecamatan,
+                  kec.nama_kecamatan
+           FROM katalog_harga k
+           JOIN toko_bangunan t ON k.id_toko = t.id_toko
+           LEFT JOIN kecamatan kec ON t.id_kecamatan = kec.id_kecamatan
+           ORDER BY k.terakhir_diperbarui DESC, k.nama_material ASC"""
+    )
+    data = cursor.fetchall()
+    cursor.close()
+    return data
+
+def ambil_semua_toko(conn) -> list[dict]:
+    """Ambil daftar semua toko bangunan beserta nama kecamatannya."""
+    cursor = get_cursor(conn)
+    cursor.execute(
+        """SELECT t.id_toko, t.nama_toko, t.nama_pemilik, t.id_kecamatan, 
+                  k.nama_kecamatan, t.latitude, t.longitude 
+           FROM toko_bangunan t 
+           LEFT JOIN kecamatan k ON t.id_kecamatan = k.id_kecamatan 
+           ORDER BY t.nama_toko ASC"""
     )
     data = cursor.fetchall()
     cursor.close()

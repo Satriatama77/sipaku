@@ -1,20 +1,23 @@
 import api from './api'
 
 /**
- * Kirim audio blob ke endpoint NLP backend.
- * @param {Blob} audioBlob - Blob dari MediaRecorder API
- * @returns {Promise} - { transkrip, hasil_parse }
+ * Kirim teks transkrip ke backend untuk diparse NLP.
+ * @param {string} teks - Teks hasil transkripsi suara / input manual
+ * @returns {Promise} - { status, hasil_parse }
  */
-export const kirimAudio = async (audioBlob) => {
-  const formData = new FormData()
-  formData.append('audio', audioBlob, 'rekaman.webm')
-  const res = await api.post('/api/nlp/voice-to-text', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  })
-  return res.data
-}
+export const parseTeks = (teks) =>
+  api.post('/api/nlp/text-parse', { teks })
 
 /**
- * Parse teks manual (mode debug / tanpa mic)
+ * Alias untuk kompatibilitas backward: parsing audio digantikan oleh speech recognition di browser.
+ * Sekarang langsung kirim teks yang sudah ditranskrip.
+ * @param {string} teks - Teks hasil Web Speech API
+ * @returns {Promise} - { transkrip, hasil_parse }
  */
-export const parseTeks = (teks) => api.post(`/api/nlp/text-parse?teks=${encodeURIComponent(teks)}`)
+export const kirimAudio = async (teks) => {
+  const res = await api.post('/api/nlp/text-parse', { teks })
+  return {
+    transkrip: teks,
+    hasil_parse: res.data.hasil_parse,
+  }
+}

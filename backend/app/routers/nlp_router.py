@@ -1,23 +1,47 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from pydantic import BaseModel
 from app.services import nlp_service
-from app.schemas.katalog_schema import KatalogUpdate
 
 router = APIRouter(prefix="/api/nlp", tags=["NLP Voice Input"])
+
+
+class TeksInput(BaseModel):
+    teks: str
+
+
+@router.post("/text-parse")
+def parse_text(body: TeksInput):
+    """
+    Endpoint utama: terima teks hasil transkripsi dari Web Speech API (browser)
+    dan kembalikan data harga terstruktur hasil parsing NLP.
+
+    Contoh request body:
+        { "teks": "harga semen gresik lima puluh ribu per zak" }
+    """
+    if not body.teks or not body.teks.strip():
+        raise HTTPException(status_code=400, detail="Teks tidak boleh kosong")
+
+    hasil = nlp_service.parse_voice_input(body.teks.strip())
+    return {
+        "status": "sukses",
+        "transkrip": body.teks.strip(),
+        "hasil_parse": hasil,
+    }
+
 
 @router.post("/voice-to-text")
 async def voice_to_text(audio: UploadFile = File(...)):
     """
-    Endpoint untuk menerima audio blob dari browser (WebM/OGG)
-    dan mengembalikan teks + data harga yang diparsing.
+    Endpoint legacy: menerima audio blob dari browser.
+    Saat ini mengembalikan simulasi teks karena Whisper belum dikonfigurasi.
+    Gunakan /text-parse dengan Web Speech API untuk hasil nyata.
     """
     audio_bytes = await audio.read()
     if not audio_bytes:
         raise HTTPException(status_code=400, detail="File audio kosong")
 
-    # Step 1: Transkripsi audio → teks
+    # Simulasi transkripsi (Whisper belum aktif)
     transkrip = await nlp_service.transkripsi_audio(audio_bytes, filename=audio.filename)
-
-    # Step 2: Parse teks → data harga terstruktur
     hasil_parse = nlp_service.parse_voice_input(transkrip)
 
     return {
@@ -25,12 +49,3 @@ async def voice_to_text(audio: UploadFile = File(...)):
         "transkrip": transkrip,
         "hasil_parse": hasil_parse,
     }
-
-@router.post("/text-parse")
-def parse_text(teks: str):
-    """
-    Endpoint debug: kirim teks manual untuk diuji parsing NLP-nya
-    tanpa perlu upload audio (berguna saat development).
-    """
-    hasil = nlp_service.parse_voice_input(teks)
-    return {"status": "sukses", "hasil_parse": hasil}

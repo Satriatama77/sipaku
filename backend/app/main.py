@@ -13,7 +13,11 @@ app = FastAPI(
     description="REST API untuk SIPAKU: Sistem Informasi Harga Konstruksi Kabupaten Lamongan",
 )
 
+# ── RBAC Middleware ───────────────────────────────────────
+app.add_middleware(BaseHTTPMiddleware, dispatch=rbac_middleware)
+
 # ── CORS (izinkan frontend React mengakses API) ───────────
+# Ditambahkan terakhir agar menjadi middleware terluar yang menangani request OPTIONS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
@@ -21,9 +25,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# ── RBAC Middleware ───────────────────────────────────────
-app.add_middleware(BaseHTTPMiddleware, dispatch=rbac_middleware)
 
 # ── Register Semua Router ─────────────────────────────────
 app.include_router(auth_router.router)
@@ -42,3 +43,4 @@ def cek_status():
         "status": "aktif",
         "docs": "/docs",
     }
+

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
-const ROLE_HOME = { pembeli: '/pembeli', penjual: '/penjual', admin: '/admin' }
+const ROLE_HOME = { penjual: '/penjual', admin: '/admin' }
 
 const DEMO_ACCOUNTS = [
   {
@@ -14,16 +14,6 @@ const DEMO_ACCOUNTS = [
     color: '#38bdf8',
     bg: 'rgba(14, 165, 233, 0.12)',
     border: '#0284c7'
-  },
-  {
-    roleName: 'Pembeli',
-    subtitle: 'Warga / Pelapor',
-    username: 'pembeli1',
-    password: 'pembeli123',
-    icon: '🛒',
-    color: '#34d399',
-    bg: 'rgba(16, 185, 129, 0.12)',
-    border: '#059669'
   },
   {
     roleName: 'Penjual',
@@ -51,8 +41,12 @@ export default function LoginPage() {
       const data = await login(username, password)
       const role = data.role?.toLowerCase()
       navigate(ROLE_HOME[role] ?? '/')
-    } catch {
-      setError('Username atau password salah. Silakan coba lagi.')
+    } catch (err) {
+      if (!err.response) {
+        setError('Gagal terhubung ke server backend (http://localhost:8000). Pastikan backend FastAPI aktif.')
+      } else {
+        setError(err.response?.data?.detail || 'Username atau password salah. Silakan coba lagi.')
+      }
     } finally {
       setLoading(false)
     }
@@ -84,14 +78,54 @@ export default function LoginPage() {
           </div>
         )}
 
+        {/* Pengumuman untuk Warga / Pembeli */}
+        <div style={{
+          background: 'rgba(56, 189, 248, 0.08)',
+          border: '1px solid rgba(56, 189, 248, 0.25)',
+          borderRadius: 10,
+          padding: '12px 14px',
+          marginBottom: 20,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+          fontSize: 12.5,
+          color: '#cbd5e1'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600, color: '#38bdf8' }}>
+            <span>📢</span>
+            <span>Untuk Warga / Pembeli (Bebas Akses):</span>
+          </div>
+          <p style={{ margin: 0, lineHeight: 1.4, color: '#94a3b8' }}>
+            Anda <strong>tidak perlu login</strong> untuk melihat komparasi harga pasar dan harga acuan SSH, ataupun melapor.
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate('/pembeli')}
+            style={{
+              background: '#0284c7',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 6,
+              padding: '6px 12px',
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: 'pointer',
+              alignSelf: 'flex-start',
+              marginTop: 2
+            }}
+          >
+            👉 Buka Dasbor Pembeli (Tanpa Login)
+          </button>
+        </div>
+
         {/* Demo Login Buttons Per Role */}
         <div style={{ marginBottom:22 }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:10 }}>
             <span style={{ color:'#cbd5e1', fontSize:12, fontWeight:600, textTransform:'uppercase', letterSpacing:'0.5px' }}>
-              ⚡ Demo Login Cepat (Pilih Role):
+              ⚡ Demo Login Petugas / Toko:
             </span>
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:10 }}>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:10 }}>
             {DEMO_ACCOUNTS.map((acc) => (
               <button
                 key={acc.username}
@@ -104,7 +138,7 @@ export default function LoginPage() {
                   background: acc.bg,
                   border: `1px solid ${acc.border}`,
                   borderRadius: 10,
-                  padding: '12px 6px',
+                  padding: '12px 8px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
@@ -116,7 +150,7 @@ export default function LoginPage() {
                 onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)' }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)' }}
               >
-                <span style={{ fontSize: 20 }}>{acc.icon}</span>
+                <span style={{ fontSize: 22 }}>{acc.icon}</span>
                 <span style={{ color: '#f8fafc', fontSize: 13, fontWeight: 600 }}>{acc.roleName}</span>
                 <span style={{ color: acc.color, fontSize: 11, fontWeight: 500 }}>{acc.username}</span>
               </button>

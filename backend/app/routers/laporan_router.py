@@ -5,12 +5,14 @@ from app.database import get_db
 
 router = APIRouter(prefix="/api/laporan", tags=["Laporan Harga"])
 
+@router.get("", include_in_schema=False)
 @router.get("/")
 def get_semua_laporan(status: str = None, conn=Depends(get_db)):
     """Ambil semua laporan. Query param ?status=Pending|Tindak Lanjut|Selesai"""
     data = laporan_service.ambil_semua_laporan(conn, status)
     return {"status": "sukses", "total": len(data), "data": data}
 
+@router.post("", include_in_schema=False)
 @router.post("/")
 def buat_laporan(laporan: LaporanCreate, conn=Depends(get_db)):
     """Submit laporan harga baru dari warga/pembeli."""

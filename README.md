@@ -26,8 +26,8 @@ Platform web berbasis **e-governance** untuk transparansi dan pengawasan harga m
 | Role | Deskripsi | Akses |
 |---|---|---|
 | **Pembeli** | Warga / Pemborong | Lihat harga SSH, lapor harga, riwayat laporan |
-| **Penjual** | Pemilik Toko Bangunan | Kelola katalog harga, input harga via suara NLP |
-| **Admin** | Dinas PU / Instansi | Verifikasi laporan, dasbor statistik, peta disparitas |
+| **Penjual** | Pemilik Toko Bangunan | Lihat katalog harga toko (hasil survei Dinas PU) |
+| **Admin** | Dinas PU / Petugas Survei | Survei harga toko via suara NLP, verifikasi laporan, dasbor statistik, peta disparitas |
 
 ---
 
@@ -83,12 +83,12 @@ frontend/
         │   └── RiwayatLaporan.jsx     # Tabel riwayat laporan + status
         │
         ├── penjual/               # Role: Pemilik Toko Bangunan
-        │   ├── PenjualDashboard.jsx   # Hub navigasi penjual
-        │   ├── KatalogHargaPage.jsx   # Katalog harga material toko
-        │   └── VoiceInputPage.jsx     # Mic recorder + parsing NLP + preview
+        │   ├── PenjualDashboard.jsx   # Hub navigasi & info survei toko
+        │   └── KatalogHargaPage.jsx   # Katalog harga material toko hasil survei
         │
-        └── admin/                 # Role: Dinas PU / Admin
-            ├── AdminDashboard.jsx     # Statistik: total laporan, zona merah
+        └── admin/                 # Role: Dinas PU / Petugas Survei
+            ├── AdminDashboard.jsx     # Statistik: total laporan, zona merah, hub survei
+            ├── AdminSurveiPage.jsx    # Survei Lapangan: pilih toko + Mic recorder + parsing NLP + update katalog
             ├── VerifikasiPage.jsx     # Tabel laporan + ubah status inline
             └── PetaDisparitasPage.jsx # Peta Leaflet: titik anomali per kecamatan
 ```
@@ -147,13 +147,14 @@ backend/
 | GET | `/api/laporan` | Semua | Ambil laporan (filter by status) |
 | POST | `/api/laporan` | Pembeli | Submit laporan harga baru |
 | GET | `/api/laporan/{id}` | Semua | Detail satu laporan |
-| GET | `/api/katalog/{id_toko}` | Penjual | Katalog harga toko |
-| PUT | `/api/katalog/{id_toko}` | Penjual | Update harga di katalog |
+| GET | `/api/katalog/{id_toko}` | Penjual, Admin | Katalog harga toko |
+| PUT | `/api/katalog/{id_toko}` | Admin, Penjual | Update harga di katalog |
+| GET | `/api/admin/toko` | Admin | Daftar semua toko untuk survei |
 | GET | `/api/admin/laporan` | Admin | Semua laporan untuk verifikasi |
 | PATCH | `/api/admin/laporan/{id}/status` | Admin | Ubah status laporan |
 | GET | `/api/admin/statistik` | Admin | Ringkasan dasbor admin |
-| POST | `/api/nlp/voice-to-text` | Penjual | Upload audio → parsing harga NLP |
-| POST | `/api/nlp/text-parse` | Penjual | Parsing teks manual (debug) |
+| POST | `/api/nlp/voice-to-text` | Admin | Upload audio survei → parsing harga NLP |
+| POST | `/api/nlp/text-parse` | Admin | Parsing teks manual (debug survei) |
 
 ---
 
@@ -287,7 +288,7 @@ Gunakan salah satu akun berikut untuk login sesuai role di `http://localhost:517
 | **Dasbor Komparasi Harga** | Tabel harga SSH sebagai referensi warga |
 | **Form Lapor Harga** | Warga lapor harga temuan + preview disparitas live sebelum submit |
 | **Kalkulator Disparitas** | Algoritma otomatis hitung % selisih → Normal / Waspada / Zona Merah |
-| **Voice Input NLP** | Penjual ucapkan harga → diproses AI → update katalog otomatis |
+| **Voice Input NLP Survei** | Petugas Dinas PU survei ke toko → rekam suara harga → AI parsing → perbarui katalog toko otomatis |
 | **Peta Disparitas** | Peta Leaflet interaktif: titik anomali harga per kecamatan Lamongan |
 | **Verifikasi Admin** | Dinas PU ubah status laporan: Pending → Tindak Lanjut → Selesai |
 

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.schemas.laporan_schema import LaporanStatusUpdate
-from app.services import laporan_service
+from app.services import laporan_service, katalog_service
 from app.database import get_db
 
 router = APIRouter(prefix="/api/admin", tags=["Admin - Dinas PU"])
@@ -37,3 +37,10 @@ def get_statistik(conn=Depends(get_db)):
             "total_zona_merah": len(zona_merah),
         }
     }
+
+@router.get("/toko")
+def get_toko_admin(conn=Depends(get_db)):
+    """Admin: ambil daftar semua toko bangunan untuk survei lapangan."""
+    data = katalog_service.ambil_semua_toko(conn)
+    return {"status": "sukses", "total": len(data), "data": data}
+
