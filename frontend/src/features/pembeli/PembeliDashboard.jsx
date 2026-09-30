@@ -95,36 +95,52 @@ export default function PembeliDashboard() {
 
   return (
     <div style={{ background: '#0f172a', minHeight: '100vh', color: '#f8fafc', paddingBottom: 60 }}>
-      <div style={WRAP}>
+      <div className="dash-container" style={{ maxWidth: 1180 }}>
         {/* Banner Publik Hero */}
         <div style={{
           background: 'linear-gradient(135deg, #1e293b 0%, #0c4a6e 100%)',
           borderRadius: 16,
-          padding: '28px 32px',
-          marginBottom: 28,
+          padding: '24px 28px',
+          marginBottom: 24,
           border: '1px solid #0284c7',
           boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: 20
+          gap: 16
         }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-              <span style={{ background: '#0369a1', color: '#e0f2fe', padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700 }}>
-                KABUPATEN LAMONGAN
-              </span>
-              <span style={{ background: '#065f46', color: '#a7f3d0', padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700 }}>
-                🌐 AKSES PUBLIK BEBAS LOGIN
-              </span>
+          <div style={{ flex: 1, minWidth: 280, display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+            <img
+              src="/logo.jpg"
+              alt="Logo SIPAKU"
+              style={{
+                width: 52,
+                height: 52,
+                objectFit: 'contain',
+                borderRadius: 12,
+                background: '#ffffff',
+                border: '2px solid rgba(255,255,255,0.2)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                flexShrink: 0
+              }}
+            />
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                <span style={{ background: '#0369a1', color: '#e0f2fe', padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700 }}>
+                  KABUPATEN LAMONGAN
+                </span>
+                <span style={{ background: '#065f46', color: '#a7f3d0', padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700 }}>
+                  🌐 AKSES PUBLIK BEBAS LOGIN
+                </span>
+              </div>
+              <h1 style={{ color: '#f8fafc', margin: '0 0 8px', fontSize: 'clamp(20px, 3.5vw, 26px)', fontWeight: 800 }}>
+                Sistem Informasi Komparasi &amp; Pengawasan Harga Material
+              </h1>
+              <p style={{ color: '#94a3b8', margin: 0, fontSize: 'clamp(12.5px, 2vw, 14px)', maxWidth: 650, lineHeight: 1.5 }}>
+                Pantau harga bahan bangunan pasar hasil survei langsung <strong>Dinas PU</strong> dan bandingkan dengan <strong>Standar Satuan Harga (SSH)</strong> resmi. Laporkan toko yang menetapkan harga tidak wajar!
+              </p>
             </div>
-            <h1 style={{ color: '#f8fafc', margin: '0 0 8px', fontSize: 26, fontWeight: 800 }}>
-              Sistem Informasi Komparasi & Pengawasan Harga Material
-            </h1>
-            <p style={{ color: '#94a3b8', margin: 0, fontSize: 14, maxWidth: 650, lineHeight: 1.5 }}>
-              Pantau harga bahan bangunan pasar hasil survei langsung <strong>Dinas PU</strong> dan bandingkan dengan <strong>Standar Satuan Harga (SSH)</strong> resmi. Laporkan toko yang menetapkan harga tidak wajar!
-            </p>
           </div>
           <div>
             <Link
@@ -133,10 +149,10 @@ export default function PembeliDashboard() {
                 background: '#0ea5e9',
                 color: '#fff',
                 textDecoration: 'none',
-                padding: '12px 22px',
+                padding: '11px 20px',
                 borderRadius: 10,
                 fontWeight: 700,
-                fontSize: 14,
+                fontSize: 13.5,
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
@@ -148,26 +164,27 @@ export default function PembeliDashboard() {
           </div>
         </div>
 
-        {/* Tab Navigasi */}
-        <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+        {/* Tab Navigasi (Horizontal Scroll on Mobile) */}
+        <div className="horizontal-scroll-touch" style={{ gap: 10, marginBottom: 18 }}>
           <button
             onClick={() => setActiveTab('pasar')}
             style={{
               background: activeTab === 'pasar' ? '#0284c7' : '#1e293b',
               color: activeTab === 'pasar' ? '#fff' : '#94a3b8',
               border: '1px solid #334155',
-              padding: '10px 20px',
+              padding: '9px 18px',
               borderRadius: 8,
               cursor: 'pointer',
               fontWeight: 600,
-              fontSize: 14,
+              fontSize: 13,
               display: 'flex',
               alignItems: 'center',
               gap: 8,
-              transition: 'all 0.2s'
+              whiteSpace: 'nowrap',
+              flexShrink: 0
             }}
           >
-            <span>🏪</span> Harga Pasar Hasil Survei Toko ({katalogPasar.length})
+            <span>🏪</span> Harga Pasar Toko ({katalogPasar.length})
           </button>
           <button
             onClick={() => setActiveTab('ssh')}
@@ -175,18 +192,19 @@ export default function PembeliDashboard() {
               background: activeTab === 'ssh' ? '#0284c7' : '#1e293b',
               color: activeTab === 'ssh' ? '#fff' : '#94a3b8',
               border: '1px solid #334155',
-              padding: '10px 20px',
+              padding: '9px 18px',
               borderRadius: 8,
               cursor: 'pointer',
               fontWeight: 600,
-              fontSize: 14,
+              fontSize: 13,
               display: 'flex',
               alignItems: 'center',
               gap: 8,
-              transition: 'all 0.2s'
+              whiteSpace: 'nowrap',
+              flexShrink: 0
             }}
           >
-            <span>📋</span> Standar Satuan Harga (SSH) 2025 ({sshData.length})
+            <span>📋</span> Standar Satuan Harga SSH ({sshData.length})
           </button>
         </div>
 

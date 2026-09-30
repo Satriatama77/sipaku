@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.schemas.laporan_schema import LaporanStatusUpdate
+from app.schemas.katalog_schema import TokoCreate
 from app.services import laporan_service, katalog_service
 from app.database import get_db
 
@@ -40,7 +41,36 @@ def get_statistik(conn=Depends(get_db)):
 
 @router.get("/toko")
 def get_toko_admin(conn=Depends(get_db)):
-    """Admin: ambil daftar semua toko bangunan untuk survei lapangan."""
-    data = katalog_service.ambil_semua_toko(conn)
+    """Admin: ambil daftar semua toko bangunan beserta akun login penjual."""
+    data = katalog_service.ambil_semua_toko_lengkap(conn)
     return {"status": "sukses", "total": len(data), "data": data}
+
+@router.post("/toko")
+def tambah_toko_admin(body: TokoCreate, conn=Depends(get_db)):
+    """Admin: tambah toko baru secara manual dan otomatis buatkan akun penjual."""
+    if not body.nama_toko.strip():
+        raise HTTPException(status_code=400, detail="Nama toko wajib diisi")
+    try:
+        hasil = katalog_service.tambah_toko_dan_akun(
+            conn,
+            nama_toko=body.nama_toko.strip(),
+            nama_pemilik=body.nama_pemilik.strip() or body.nama_toko.strip(),
+            id_kecamatan=body.id_kecamatan,
+            latitude=body.latitude,
+            longitude=body.longitude
+        )
+        return {
+            "status": "sukses",
+            "pesan": f"Toko '{body.nama_toko}' dan akun penjual berhasil dibuat!",
+            "data": hasil
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Gagal menambah toko: {str(e)}")
+
+@router.get("/kecamatan")
+def get_kecamatan_list(conn=Depends(get_db)):
+    """Admin: ambil daftar kecamatan untuk formulir tambah toko."""
+    data = katalog_service.ambil_daftar_kecamatan(conn)
+    return {"status": "sukses", "total": len(data), "data": data}
+
 

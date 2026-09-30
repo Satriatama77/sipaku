@@ -19,6 +19,14 @@ export default function KatalogHargaPage() {
       .then((res) => {
         const list = res.data?.data || []
         setDaftarToko(list)
+        if (user?.id_toko) {
+          const match = list.find((t) => t.id_toko === Number(user.id_toko))
+          if (match) {
+            setSelectedTokoId(match.id_toko)
+            setTokoAktif(match)
+            return
+          }
+        }
         if (user?.nama_lengkap) {
           const match = list.find((t) =>
             t.nama_toko.toLowerCase().includes(user.nama_lengkap.toLowerCase()) ||
@@ -31,7 +39,10 @@ export default function KatalogHargaPage() {
           }
         }
         const defaultMatch = list.find((t) => t.id_toko === 2) || list[0]
-        if (defaultMatch) setTokoAktif(defaultMatch)
+        if (defaultMatch) {
+          setSelectedTokoId(defaultMatch.id_toko)
+          setTokoAktif(defaultMatch)
+        }
       })
       .catch((err) => console.error(err))
   }, [user])
@@ -63,25 +74,42 @@ export default function KatalogHargaPage() {
           </div>
           {daftarToko.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 12, color: '#94a3b8' }}>Pilih Toko:</span>
-              <select
-                value={selectedTokoId}
-                onChange={(e) => setSelectedTokoId(Number(e.target.value))}
-                style={{
-                  background: '#1e293b',
-                  color: '#f8fafc',
-                  border: '1px solid #334155',
+              {user?.role === 'admin' ? (
+                <>
+                  <span style={{ fontSize: 12, color: '#94a3b8' }}>Supervisi Toko:</span>
+                  <select
+                    value={selectedTokoId}
+                    onChange={(e) => setSelectedTokoId(Number(e.target.value))}
+                    style={{
+                      background: '#1e293b',
+                      color: '#f8fafc',
+                      border: '1px solid #334155',
+                      borderRadius: 8,
+                      padding: '8px 12px',
+                      fontSize: 13
+                    }}
+                  >
+                    {daftarToko.map((t) => (
+                      <option key={t.id_toko} value={t.id_toko}>
+                        {t.nama_toko} ({t.nama_kecamatan || 'Lamongan'})
+                      </option>
+                    ))}
+                  </select>
+                </>
+              ) : (
+                <div style={{
+                  background: 'rgba(56, 189, 248, 0.1)',
+                  border: '1px solid #0284c7',
+                  padding: '6px 12px',
                   borderRadius: 8,
-                  padding: '8px 12px',
-                  fontSize: 13
-                }}
-              >
-                {daftarToko.map((t) => (
-                  <option key={t.id_toko} value={t.id_toko}>
-                    {t.nama_toko} ({t.nama_kecamatan || 'Lamongan'})
-                  </option>
-                ))}
-              </select>
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: '#38bdf8'
+                }}>
+                  🏪 {tokoAktif?.nama_toko || 'Toko Terdaftar'}
+                </div>
+              )}
+
               <button
                 onClick={() => fetchKatalog(selectedTokoId)}
                 title="Muat ulang data terbaru"

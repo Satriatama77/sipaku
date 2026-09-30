@@ -1,111 +1,217 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --heading: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
+  font-family: var(--sans);
+  letter-spacing: -0.01em;
+  color-scheme: light;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-body {
-  margin: 0;
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
   box-sizing: border-box;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
+html, body {
   margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  font-family: var(--sans);
+  background: #f8fafc;
+  color: #1e293b;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* ── Custom Scrollbar for Touch & Desktop ── */
+.horizontal-scroll-touch {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  gap: 8px;
+  padding-bottom: 2px;
 }
+.horizontal-scroll-touch::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Responsive Grid Layouts ── */
+.dash-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px 28px;
+}
+
+.hero-banner-box {
+  background: linear-gradient(135deg, #0b1329 0%, #111e3b 60%, #0d172e 100%);
+  border-radius: 14px;
+  padding: 28px 32px;
+  color: #ffffff;
+  border: 1px solid #1e293b;
+  box-shadow: 0 12px 30px rgba(11, 19, 41, 0.4);
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.dash-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.85fr) minmax(320px, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.dash-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.dash-split-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.dash-triple-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  background: #f8fafc;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+  margin-bottom: 12px;
+}
+
+.dash-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.dash-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.dash-search-container {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 5px 6px 5px 16px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  width: 100%;
+}
+
+/* ── Breakpoint: Tablet (<= 1024px) ── */
+@media (max-width: 1024px) {
+  .nav-desktop-modules,
+  .nav-desktop-actions {
+    display: none !important;
+  }
+  .nav-mobile-toggle {
+    display: flex !important;
+  }
+  .nav-mobile-scroll-bar {
+    display: flex !important;
+  }
+  .dash-container {
+    padding: 16px 20px;
+  }
+  .dash-main-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .dash-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .hero-banner-box {
+    padding: 20px 22px;
+  }
+}
+
+/* ── Breakpoint: Mobile (<= 768px) ── */
+@media (max-width: 768px) {
+  .dash-container {
+    padding: 12px 14px;
+  }
+  .hero-banner-box {
+    padding: 18px 16px;
+    border-radius: 12px;
+  }
+  .dash-metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .dash-split-comparison {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .dash-triple-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .dash-gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .dash-card-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .dash-card-footer > div {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  .dash-card-footer button {
+    width: 100%;
+    justify-content: center;
+  }
+  .dash-search-container {
+    flex-direction: column;
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  .dash-search-container input {
+    width: 100%;
+    padding: 6px 0;
+  }
+  .dash-search-container button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ── Breakpoint: Small Mobile (<= 480px) ── */
+@media (max-width: 480px) {
+  .dash-gallery-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

@@ -8,7 +8,7 @@ const api = axios.create({
 
 // ── Request Interceptor: tambahkan JWT token ke setiap request ──
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('sipaku_token')
+  const token = sessionStorage.getItem('sipaku_token') || localStorage.getItem('sipaku_token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -20,6 +20,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && !error.config?.url?.includes('/login')) {
+      sessionStorage.removeItem('sipaku_token')
+      sessionStorage.removeItem('sipaku_user')
       localStorage.removeItem('sipaku_token')
       localStorage.removeItem('sipaku_user')
       window.location.href = '/login'

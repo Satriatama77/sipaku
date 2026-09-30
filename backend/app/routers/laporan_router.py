@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from app.schemas.laporan_schema import LaporanCreate, LaporanStatusUpdate
 from app.services import laporan_service
 from app.database import get_db
@@ -14,12 +14,12 @@ def get_semua_laporan(status: str = None, conn=Depends(get_db)):
 
 @router.post("", include_in_schema=False)
 @router.post("/")
-def buat_laporan(laporan: LaporanCreate, conn=Depends(get_db)):
+def buat_laporan(laporan: LaporanCreate, request: Request, conn=Depends(get_db)):
     """Submit laporan harga baru dari warga/pembeli."""
-    # TODO: ambil id_pelapor dari JWT token (sementara hardcode)
-    id_pelapor = 1
+    id_pelapor = int(getattr(request.state, "user_id", 1))
     hasil = laporan_service.buat_laporan(conn, laporan, id_pelapor)
     return {"status": "sukses", "pesan": "Laporan berhasil dikirim", "data": hasil}
+
 
 @router.get("/{id_laporan}")
 def get_laporan_by_id(id_laporan: int, conn=Depends(get_db)):

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import { submitLaporan } from '../../services/laporanService'
 import { useDisparitas } from '../../hooks/useDisparitas'
 import kecamatanData from '../../data/kecamatan_lamongan.json'
@@ -9,8 +10,10 @@ const WRAP  = { padding: '24px 32px', maxWidth: 700, margin: '0 auto' }
 const INPUT = { width: '100%', padding: '10px 12px', background: '#0f172a', border: '1px solid #334155', borderRadius: 8, color: '#f8fafc', fontSize: 14, boxSizing: 'border-box', marginTop: 6, marginBottom: 16 }
 
 export default function LaporHargaPage() {
+  const { user } = useAuth()
   const location = useLocation()
   const prefill = location.state || {}
+
 
   const [form, setForm] = useState({
     id_kecamatan: prefill.id_kecamatan || '',
@@ -70,9 +73,28 @@ export default function LaporHargaPage() {
   return (
     <div style={{ background: '#0f172a', minHeight: '100vh', color: '#f8fafc' }}>
       <div style={WRAP}>
-        <h1 style={{ color: '#38bdf8' }}>Lapor Harga Material</h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, flexWrap: 'wrap', gap: 10 }}>
+          <h1 style={{ color: '#38bdf8', margin: 0, fontSize: 24 }}>Lapor Harga Material</h1>
+          {user && (
+            <div style={{
+              background: 'rgba(56, 189, 248, 0.1)',
+              border: '1px solid rgba(56, 189, 248, 0.3)',
+              padding: '4px 12px',
+              borderRadius: 20,
+              fontSize: 12,
+              color: '#38bdf8',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6
+            }}>
+              <span>👤</span>
+              <span>Pelapor: <strong>{user.nama_lengkap}</strong> ({user.role})</span>
+            </div>
+          )}
+        </div>
         {error && <div style={{ background: '#450a0a', color: '#fca5a5', padding: '10px 14px', borderRadius: 8, marginBottom: 16 }}>{error}</div>}
         <form onSubmit={handleSubmit} style={{ background: '#1e293b', padding: 28, borderRadius: 16 }}>
+
           <label style={{ color: '#94a3b8', fontSize: 13 }}>Kecamatan</label>
           <select name="id_kecamatan" value={form.id_kecamatan} onChange={onChange} style={INPUT} required>
             <option value="">-- Pilih Kecamatan --</option>

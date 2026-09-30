@@ -5,6 +5,11 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
+class RegisterRequest(BaseModel):
+    nama_lengkap: str
+    username: str
+    password: str
+
 class LoginResponse(BaseModel):
     status: str
     pesan: str
@@ -12,3 +17,4 @@ class LoginResponse(BaseModel):
     token_type: str = "bearer"
     role: Optional[str] = None
     nama_lengkap: Optional[str] = None
+    id_toko: Optional[int] = None

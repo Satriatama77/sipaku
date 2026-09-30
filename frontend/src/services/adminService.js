@@ -7,6 +7,9 @@ export const updateStatusLaporan = (id, status, catatan_admin = null) =>
 
 // ── Toko & Survei Katalog Lapangan ─────────────────────────
 export const getSemuaToko       = () => api.get('/api/admin/toko')
+export const tambahToko         = (data) => api.post('/api/admin/toko', data)
+export const getDaftarKecamatan = () => api.get('/api/admin/kecamatan')
 export const getKatalogToko     = (idToko) => api.get(`/api/katalog/${idToko}`)
 export const updateKatalogToko   = (idToko, data) => api.put(`/api/katalog/${idToko}`, data)
+
 

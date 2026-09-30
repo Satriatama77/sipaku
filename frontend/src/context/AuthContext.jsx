@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback } from 'react'
-import { login as apiLogin, logout as apiLogout, getCurrentUser } from '../services/authService'
+import { login as apiLogin, logout as apiLogout, register as apiRegister, getCurrentUser } from '../services/authService'
 
 const AuthContext = createContext(null)
 
@@ -8,7 +8,13 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (username, password) => {
     const data = await apiLogin(username, password)
-    setUser({ role: data.role, nama_lengkap: data.nama_lengkap, username })
+    setUser({ role: data.role, nama_lengkap: data.nama_lengkap, username, id_toko: data.id_toko })
+    return data
+  }, [])
+
+  const register = useCallback(async (nama_lengkap, username, password) => {
+    const data = await apiRegister(nama_lengkap, username, password)
+    setUser({ role: data.role, nama_lengkap: data.nama_lengkap, username, id_toko: data.id_toko })
     return data
   }, [])
 
@@ -18,11 +24,12 @@ export function AuthProvider({ children }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoggedIn: !!user }}>
+    <AuthContext.Provider value={{ user, login, register, logout, isLoggedIn: !!user }}>
       {children}
     </AuthContext.Provider>
   )
 }
+
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
