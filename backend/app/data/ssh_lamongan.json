@@ -21,5 +21,16 @@
   { "nama_material": "Cat Tembok (5kg)", "satuan": "kaleng", "harga_ssh": 95000, "tahun": 2025 },
   { "nama_material": "Pipa PVC 4\" AW", "satuan": "batang", "harga_ssh": 95000, "tahun": 2025 },
   { "nama_material": "Kayu Kaso 5x7", "satuan": "batang", "harga_ssh": 35000, "tahun": 2025 },
+  { "nama_material": "Semen Gresik PPC 50kg", "satuan": "zak", "harga_ssh": 63500, "tahun": 2025 },
+  { "nama_material": "Besi Beton Polos 10mm SNI (12m)", "satuan": "batang", "harga_ssh": 82000, "tahun": 2025 },
+  { "nama_material": "Besi Beton Polos 10mm SNI", "satuan": "batang", "harga_ssh": 82000, "tahun": 2025 },
+  { "nama_material": "Pasir Pasang Lumajang (M3)", "satuan": "m3", "harga_ssh": 285000, "tahun": 2025 },
+  { "nama_material": "Bata Merah Press Tikung", "satuan": "biji", "harga_ssh": 850, "tahun": 2025 },
+  { "nama_material": "Genteng Karangpilang Good Year", "satuan": "buah", "harga_ssh": 4500, "tahun": 2025 },
+  { "nama_material": "Cat Tembok Weathershield 5kg", "satuan": "pail", "harga_ssh": 125000, "tahun": 2025 },
+  { "nama_material": "Pipa PVC 4\" AW SNI", "satuan": "batang", "harga_ssh": 95000, "tahun": 2025 },
+  { "nama_material": "Baja Ringan Canal C75 (0.75mm)", "satuan": "batang", "harga_ssh": 88000, "tahun": 2025 },
+  { "nama_material": "Keramik Lantai 40x40 Polos", "satuan": "dus", "harga_ssh": 65000, "tahun": 2025 },
+  { "nama_material": "Kayu Kaso 5x7 Meranti", "satuan": "batang", "harga_ssh": 35000, "tahun": 2025 },
   { "nama_material": "Kayu Papan 3x20", "satuan": "batang", "harga_ssh": 55000, "tahun": 2025 }
 ]

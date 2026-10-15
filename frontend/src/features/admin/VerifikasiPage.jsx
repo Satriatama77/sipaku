@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getLaporanAdmin, updateStatusLaporan } from '../../services/adminService'
 import StatusBadge from '../../components/StatusBadge'
+import { useToast } from '../../context/ToastContext'
 
 const STATUS_LIST = ['Pending', 'Tindak Lanjut', 'Selesai']
 
@@ -8,24 +9,27 @@ export default function VerifikasiPage() {
   const [data, setData]     = useState([])
   const [filter, setFilter] = useState('')
   const [loading, setLoading] = useState(true)
-  const [toastMessage, setToastMessage] = useState(null)
-
-  const showToast = (msg) => {
-    setToastMessage(msg)
-    setTimeout(() => setToastMessage(null), 3500)
-  }
+  const [fotoModal, setFotoModal] = useState(null) // URL foto yang dibuka di modal
+  const { toast } = useToast()
 
   const fetchData = (status = '') => {
     setLoading(true)
-    getLaporanAdmin(status || null).then((res) => setData(res.data.data)).catch(() => setData([])).finally(() => setLoading(false))
+    getLaporanAdmin(status || null)
+      .then((res) => setData(res.data.data))
+      .catch(() => setData([]))
+      .finally(() => setLoading(false))
   }
 
   useEffect(() => { fetchData() }, [])
 
   const handleStatus = async (id, status) => {
-    await updateStatusLaporan(id, status)
-    showToast(`✅ Status laporan #${id} berhasil diubah ke "${status}"`)
-    fetchData(filter)
+    try {
+      await updateStatusLaporan(id, status)
+      toast.success(`Status laporan #${id} berhasil diubah ke "${status}"`, 'Status Diperbarui')
+      fetchData(filter)
+    } catch {
+      toast.error(`Gagal memperbarui status laporan #${id}`, 'Kesalahan')
+    }
   }
 
   const counts = {
@@ -37,29 +41,6 @@ export default function VerifikasiPage() {
 
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh', color: '#1e293b', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div style={{
-          position: 'fixed',
-          top: 76,
-          right: 20,
-          background: '#0f172a',
-          color: '#ffffff',
-          padding: '12px 18px',
-          borderRadius: 8,
-          boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
-          fontSize: 13,
-          fontWeight: 600,
-          zIndex: 9999,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          border: '1px solid #334155',
-          maxWidth: '90vw'
-        }}>
-          {toastMessage}
-        </div>
-      )}
 
       <div className="dash-container" style={{ maxWidth: 1200 }}>
         {/* Hero Banner */}
@@ -216,7 +197,7 @@ export default function VerifikasiPage() {
               <table style={{ width: '100%', minWidth: 780, borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
                   <tr style={{ background: '#f8fafc' }}>
-                    {['#', 'Material', 'Toko', 'Kecamatan', 'Harga Temuan', 'Disparitas', 'Status', 'Aksi'].map((h) => (
+                    {['#', 'Material', 'Toko', 'Kecamatan', 'Harga Temuan', 'Disparitas', 'Bukti Foto', 'Status', 'Aksi'].map((h) => (
                       <th key={h} style={{
                         padding: '12px 16px',
                         textAlign: 'left',
@@ -232,7 +213,7 @@ export default function VerifikasiPage() {
                 <tbody>
                   {data.length === 0 && (
                     <tr>
-                      <td colSpan={8} style={{ padding: 36, textAlign: 'center', color: '#94a3b8' }}>
+                      <td colSpan={9} style={{ padding: 36, textAlign: 'center', color: '#94a3b8' }}>
                         Tidak ada laporan yang sesuai filter.
                       </td>
                     </tr>
@@ -248,7 +229,12 @@ export default function VerifikasiPage() {
                       <td style={{ padding: '12px 16px', fontWeight: 700, color: '#0f172a' }}>
                         {l.nama_material}
                       </td>
-                      <td style={{ padding: '12px 16px', color: '#475569' }}>{l.nama_toko}</td>
+                      <td style={{ padding: '12px 16px', color: '#475569' }}>
+                        <div style={{ fontWeight: 600, color: '#334155' }}>{l.nama_toko}</div>
+                        <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <span>👤</span> {l.nama_pelapor || 'Warga Anonim'}
+                        </div>
+                      </td>
                       <td style={{ padding: '12px 16px' }}>
                         <span style={{
                           background: '#f1f5f9',
@@ -285,6 +271,51 @@ export default function VerifikasiPage() {
                           {l.persentase_disparitas?.toFixed(1)}%
                         </span>
                       </td>
+                      <td style={{ padding: '12px 16px' }}>
+                        {l.foto_url ? (
+                          <button
+                            onClick={() => setFotoModal(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}${l.foto_url}`)}
+                            style={{
+                              background: 'none',
+                              border: '2px solid #e2e8f0',
+                              borderRadius: 6,
+                              padding: 0,
+                              cursor: 'pointer',
+                              overflow: 'hidden',
+                              display: 'block',
+                              transition: 'border-color 0.15s'
+                            }}
+                            onMouseOver={(e) => e.currentTarget.style.borderColor = '#0284c7'}
+                            onMouseOut={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
+                            title="Klik untuk memperbesar"
+                          >
+                            <img
+                              src={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}${l.foto_url}`}
+                              alt="Bukti foto"
+                              style={{
+                                width: 48,
+                                height: 48,
+                                objectFit: 'cover',
+                                display: 'block'
+                              }}
+                            />
+                          </button>
+                        ) : (
+                          <span style={{
+                            fontSize: 11,
+                            color: '#94a3b8',
+                            background: '#f8fafc',
+                            border: '1px dashed #cbd5e1',
+                            padding: '3px 8px',
+                            borderRadius: 4,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4
+                          }}>
+                            <span style={{ fontSize: 12 }}>📷</span> Tanpa Bukti
+                          </span>
+                        )}
+                      </td>
                       <td style={{ padding: '12px 16px' }}><StatusBadge status={l.status} /></td>
                       <td style={{ padding: '12px 16px' }}>
                         <select onChange={(e) => handleStatus(l.id_laporan, e.target.value)} defaultValue={l.status}
@@ -308,6 +339,77 @@ export default function VerifikasiPage() {
             </div>
           )}
         </section>
+
+        {/* Modal Lightbox Foto Bukti */}
+        {fotoModal && (
+          <div
+            onClick={() => setFotoModal(null)}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0,0,0,0.75)',
+              zIndex: 10000,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 20,
+              cursor: 'zoom-out'
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: '#ffffff',
+                borderRadius: 12,
+                overflow: 'hidden',
+                maxWidth: 720,
+                maxHeight: '85vh',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
+                position: 'relative'
+              }}
+            >
+              <div style={{
+                padding: '10px 16px',
+                background: '#0f172a',
+                color: '#ffffff',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <span style={{ fontSize: 13, fontWeight: 700 }}>Bukti Foto Laporan</span>
+                <button
+                  onClick={() => setFotoModal(null)}
+                  style={{
+                    background: 'rgba(255,255,255,0.15)',
+                    border: 'none',
+                    color: '#ffffff',
+                    borderRadius: 6,
+                    padding: '4px 12px',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  ✕ Tutup
+                </button>
+              </div>
+              <img
+                src={fotoModal}
+                alt="Bukti foto laporan"
+                style={{
+                  width: '100%',
+                  maxHeight: '70vh',
+                  objectFit: 'contain',
+                  display: 'block',
+                  background: '#f1f5f9'
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

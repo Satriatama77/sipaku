@@ -18,14 +18,14 @@ def buat_laporan(conn, laporan: LaporanCreate, id_pelapor: int) -> dict:
     query = """
         INSERT INTO laporan_harga
             (id_pelapor, id_kecamatan, nama_toko, nama_material,
-             harga_temuan, harga_ssh, persentase_disparitas, status, foto_url, tanggal_laporan)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, 'Pending', %s, %s)
+             harga_temuan, harga_ssh, persentase_disparitas, status, foto_url, nama_pelapor, tanggal_laporan)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, 'Pending', %s, %s, %s)
     """
     cursor.execute(query, (
         id_pelapor, laporan.id_kecamatan, laporan.nama_toko,
         laporan.nama_material, laporan.harga_temuan,
         hasil.harga_ssh, hasil.persentase,
-        laporan.foto_url, datetime.now(),
+        laporan.foto_url, laporan.nama_pelapor or "Warga Anonim", datetime.now(),
     ))
     conn.commit()
     id_baru = cursor.lastrowid

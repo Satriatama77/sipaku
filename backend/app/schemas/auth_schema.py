@@ -4,6 +4,7 @@ from typing import Optional
 class LoginRequest(BaseModel):
     username: str
     password: str
+    expected_role: Optional[str] = None
 
 class RegisterRequest(BaseModel):
     nama_lengkap: str

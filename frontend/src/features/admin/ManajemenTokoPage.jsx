@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'  // used for 'Kembali ke Dasbor' link
 import { getSemuaToko, tambahToko, getDaftarKecamatan } from '../../services/adminService'
 
 export default function ManajemenTokoPage() {
@@ -161,7 +161,7 @@ export default function ManajemenTokoPage() {
                   boxShadow: '0 2px 4px rgba(234, 88, 12, 0.3)'
                 }}
               >
-                <span>➕</span> Tambah Toko Baru
+                Tambah Toko Baru
               </button>
             </div>
           </div>
@@ -214,16 +214,12 @@ export default function ManajemenTokoPage() {
           background: '#ffffff',
           border: '1px solid #e2e8f0',
           borderRadius: 12,
-          padding: 16,
+          padding: '14px 18px',
           marginBottom: 20,
-          display: 'flex',
-          gap: 12,
-          alignItems: 'center',
           boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
         }}>
-          <span style={{ fontSize: 24 }}>💡</span>
           <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
-            Setiap kali Admin menambahkan toko baru di formulir ini, sistem akan <strong>secara otomatis membuatkan akun login penjual</strong> di database dengan username berbasis nama toko dan password default <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: 4, color: '#0f172a', fontWeight: 600 }}>penjual123</code>.
+            <strong style={{ color: '#0f172a' }}>Informasi Sistem:</strong> Setiap kali Admin menambahkan toko baru di formulir ini, sistem akan <strong>secara otomatis membuatkan akun login penjual</strong> di database dengan username berbasis nama toko dan password default <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: 4, color: '#0f172a', fontWeight: 600 }}>penjual123</code>.
           </div>
         </section>
 
@@ -244,7 +240,7 @@ export default function ManajemenTokoPage() {
           <div style={{ display: 'flex', gap: 12, flex: 1, minWidth: 280, flexWrap: 'wrap' }}>
             <input
               type="text"
-              placeholder="🔍 Cari nama toko, pemilik, atau username..."
+              placeholder="Cari nama toko, pemilik, atau username..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{
@@ -317,7 +313,7 @@ export default function ManajemenTokoPage() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, textAlign: 'left' }}>
                 <thead>
                   <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                    {['ID', 'Nama Toko', 'Pemilik / Kontak', 'Kecamatan', 'Akun Login Penjual', 'Koordinat', 'Aksi'].map((h) => (
+                    {['ID', 'Nama Toko', 'Pemilik / Kontak', 'Kecamatan', 'Akun Login Penjual', 'Koordinat'].map((h) => (
                       <th key={h} style={{
                         padding: '12px 16px',
                         color: '#64748b',
@@ -350,12 +346,9 @@ export default function ManajemenTokoPage() {
                       </td>
                       <td style={{ padding: '12px 16px' }}>
                         {toko.username ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <span style={{ fontSize: 14 }}>👤</span>
-                            <div>
-                              <div style={{ fontWeight: 700, color: '#059669' }}>{toko.username}</div>
-                              <div style={{ fontSize: 11, color: '#94a3b8' }}>Role: Penjual (Aktif)</div>
-                            </div>
+                          <div>
+                            <div style={{ fontWeight: 700, color: '#059669' }}>{toko.username}</div>
+                            <div style={{ fontSize: 11, color: '#94a3b8' }}>Role: Penjual (Aktif)</div>
                           </div>
                         ) : (
                           <span style={{
@@ -381,26 +374,7 @@ export default function ManajemenTokoPage() {
                           <span style={{ color: '#cbd5e1' }}>-</span>
                         )}
                       </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <Link
-                          to={`/penjual/katalog`}
-                          style={{
-                            background: '#f8fafc',
-                            border: '1px solid #0284c7',
-                            color: '#0284c7',
-                            padding: '5px 12px',
-                            borderRadius: 6,
-                            fontSize: 12,
-                            fontWeight: 700,
-                            textDecoration: 'none',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 4
-                          }}
-                        >
-                          Lihat Katalog →
-                        </Link>
-                      </td>
+
                     </tr>
                   ))}
                 </tbody>
@@ -438,13 +412,13 @@ export default function ManajemenTokoPage() {
               <>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
                   <h2 style={{ margin: 0, fontSize: 18, color: '#0f172a', fontWeight: 800 }}>
-                    ➕ Tambah Toko & Buat Akun Penjual
+                    Tambah Toko &amp; Buat Akun Penjual
                   </h2>
                   <button
                     onClick={() => setModalTambah(false)}
                     style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer' }}
                   >
-                    ✕
+                    &times;
                   </button>
                 </div>
 
@@ -569,9 +543,8 @@ export default function ManajemenTokoPage() {
               /* Success Card with Credentials */
               <div>
                 <div style={{ textAlign: 'center', marginBottom: 18 }}>
-                  <div style={{ fontSize: 44, marginBottom: 8 }}>🎉</div>
                   <h2 style={{ margin: '0 0 6px', color: '#059669', fontSize: 20, fontWeight: 800 }}>
-                    Toko & Akun Penjual Berhasil Dibuat!
+                    Toko &amp; Akun Penjual Berhasil Dibuat!
                   </h2>
                   <p style={{ margin: 0, color: '#64748b', fontSize: 13 }}>
                     Toko <strong>{akunBaru.nama_toko}</strong> telah tersimpan di sistem. Berikan informasi akun berikut kepada pemilik toko untuk login.
@@ -626,8 +599,7 @@ export default function ManajemenTokoPage() {
                       gap: 6
                     }}
                   >
-                    <span>{copySuccess ? '✓' : '📋'}</span>
-                    <span>{copySuccess ? 'Berhasil Disalin!' : 'Salin Akun Penjual'}</span>
+                    <span>{copySuccess ? 'Berhasil Disalin' : 'Salin Akun Penjual'}</span>
                   </button>
                   <button
                     onClick={() => setModalTambah(false)}

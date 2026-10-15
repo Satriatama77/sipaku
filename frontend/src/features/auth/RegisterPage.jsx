@@ -1,39 +1,58 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import AlertBox from '../../components/ui/AlertBox'
+import FormField from '../../components/ui/FormField'
+import { useFormValidation, validators } from '../../hooks/useFormValidation'
 
 export default function RegisterPage() {
-  const [form, setForm] = useState({
-    nama_lengkap: '',
-    username: '',
-    password: '',
-    konfirmasi_password: ''
-  })
-  const [showPassword, setShowPassword]     = useState(false)
-  const [showKonfirmasi, setShowKonfirmasi] = useState(false)
-  const [error, setError]                   = useState('')
-  const [sukses, setSukses]                 = useState(false)
-  const [loading, setLoading]               = useState(false)
-  const { register }                        = useAuth()
-  const navigate                            = useNavigate()
+  const [error, setError]     = useState('')
+  const [sukses, setSukses]   = useState(false)
+  const [loading, setLoading] = useState(false)
+  const { register }          = useAuth()
+  const navigate              = useNavigate()
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  // Inisialisasi useFormValidation dengan schema validasi komprehensif
+  const {
+    isSubmitting,
+    handleSubmit,
+    getFieldProps,
+  } = useFormValidation(
+    {
+      nama_lengkap: '',
+      username: '',
+      password: '',
+      konfirmasi_password: '',
+    },
+    {
+      nama_lengkap: [
+        validators.required('Nama lengkap wajib diisi'),
+        validators.minLength(3, 'Nama lengkap minimal 3 karakter'),
+      ],
+      username: [
+        validators.required('Username akun wajib diisi'),
+        validators.minLength(3, 'Username minimal 3 karakter'),
+        validators.matches(
+          /^[a-zA-Z0-9_]+$/,
+          'Username hanya boleh memuat huruf, angka, dan underscore (_)'
+        ),
+      ],
+      password: [
+        validators.required('Password wajib diisi'),
+        validators.minLength(6, 'Password minimal 6 karakter'),
+      ],
+      konfirmasi_password: [
+        validators.required('Konfirmasi password wajib diisi'),
+        validators.sameAs('password', 'Konfirmasi password tidak cocok dengan password di atas'),
+      ],
+    }
+  )
+
+  const handleValidSubmit = async (values) => {
     setError('')
-
-    if (form.password.length < 6) {
-      setError('Password minimal 6 karakter.')
-      return
-    }
-
-    if (form.password !== form.konfirmasi_password) {
-      setError('Konfirmasi password tidak cocok.')
-      return
-    }
-
     setLoading(true)
     try {
-      await register(form.nama_lengkap, form.username, form.password)
+      await register(values.nama_lengkap.trim(), values.username.trim(), values.password)
       setSukses(true)
       setTimeout(() => {
         navigate('/pembeli')
@@ -48,6 +67,7 @@ export default function RegisterPage() {
       setLoading(false)
     }
   }
+
 
   return (
     <div style={{
@@ -67,7 +87,7 @@ export default function RegisterPage() {
       position: 'relative',
       fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif"
     }}>
-      {/* Decorative Radar/Concentric Rings Accent (Subtle Background seperti login) */}
+      {/* Decorative Radar/Concentric Rings Accent (Subtle Background) */}
       <div style={{
         position: 'absolute',
         top: '50%',
@@ -76,7 +96,7 @@ export default function RegisterPage() {
         width: 720,
         height: 720,
         borderRadius: '50%',
-        border: '1px dashed rgba(148, 163, 184, 0.28)',
+        border: '1px dashed rgba(148, 163, 184, 0.25)',
         pointerEvents: 'none',
         zIndex: 0
       }} />
@@ -88,7 +108,7 @@ export default function RegisterPage() {
         width: 960,
         height: 960,
         borderRadius: '50%',
-        border: '1px solid rgba(148, 163, 184, 0.15)',
+        border: '1px solid rgba(148, 163, 184, 0.12)',
         pointerEvents: 'none',
         zIndex: 0
       }} />
@@ -152,22 +172,20 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Pill Banner Kedinasan */}
+            {/* Pill Banner Kedinasan (Clean tanpa emoji) */}
             <div>
               <span style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 5,
                 background: '#f8fafc',
                 border: '1px solid #e2e8f0',
-                color: '#334155',
+                color: '#475569',
                 fontSize: 10,
                 fontWeight: 700,
-                padding: '3px 10px',
+                padding: '4px 12px',
                 borderRadius: 9999,
-                letterSpacing: '0.02em'
+                letterSpacing: '0.04em'
               }}>
-                <span>🏛️</span>
                 PEMERINTAH KABUPATEN LAMONGAN • DINAS PU BM & CK
               </span>
             </div>
@@ -194,301 +212,56 @@ export default function RegisterPage() {
 
           {/* Error Alert */}
           {error && (
-            <div style={{
-              background: '#fef2f2',
-              border: '1px solid #fecaca',
-              color: '#b91c1c',
-              padding: '10px 14px',
-              borderRadius: 8,
-              marginBottom: 16,
-              fontSize: 12.5,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8
-            }}>
-              <span>⚠️</span>
-              <span>{error}</span>
-            </div>
+            <AlertBox variant="error" title="Pendaftaran Gagal" style={{ marginBottom: 16 }}>
+              {error}
+            </AlertBox>
           )}
 
           {/* Success Alert */}
           {sukses && (
-            <div style={{
-              background: '#ecfdf5',
-              border: '1px solid #a7f3d0',
-              color: '#047857',
-              padding: '12px 14px',
-              borderRadius: 8,
-              marginBottom: 16,
-              fontSize: 12.5,
-              textAlign: 'center',
-              fontWeight: 700
-            }}>
-              🎉 Akun berhasil didaftarkan! Mengalihkan ke Dasbor...
-            </div>
+            <AlertBox variant="success" title="Registrasi Berhasil" style={{ marginBottom: 16 }}>
+              Akun warga berhasil didaftarkan! Mengalihkan Anda ke dasbor pembeli...
+            </AlertBox>
           )}
 
           {/* Form Registrasi Warga */}
-          <form onSubmit={handleSubmit}>
-            {/* Input Nama Lengkap */}
-            <div style={{ marginBottom: 14 }}>
-              <label
-                htmlFor="reg-nama"
-                style={{
-                  display: 'block',
-                  color: '#334155',
-                  fontSize: 12.5,
-                  fontWeight: 700,
-                  marginBottom: 6
-                }}
-              >
-                Nama Lengkap
-              </label>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <span style={{
-                  position: 'absolute',
-                  left: 12,
-                  fontSize: 14,
-                  color: '#94a3b8',
-                  pointerEvents: 'none'
-                }}>
-                  👤
-                </span>
-                <input
-                  id="reg-nama"
-                  type="text"
-                  value={form.nama_lengkap}
-                  onChange={(e) => setForm({ ...form, nama_lengkap: e.target.value })}
-                  placeholder="e.g. Ahmad Fauzi"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px 10px 36px',
-                    background: '#f8fafc',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: 8,
-                    color: '#0f172a',
-                    fontSize: 13.5,
-                    boxSizing: 'border-box',
-                    outline: 'none',
-                    transition: 'border-color 0.15s, background-color 0.15s'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#0284c7'
-                    e.target.style.backgroundColor = '#ffffff'
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#cbd5e1'
-                    e.target.style.backgroundColor = '#f8fafc'
-                  }}
-                />
-              </div>
-            </div>
+          <form onSubmit={handleSubmit(handleValidSubmit)} noValidate>
+            <FormField
+              label="Nama Lengkap"
+              placeholder="Masukkan nama lengkap Anda"
+              required
+              {...getFieldProps('nama_lengkap')}
+            />
 
-            {/* Input Username */}
-            <div style={{ marginBottom: 14 }}>
-              <label
-                htmlFor="reg-username"
-                style={{
-                  display: 'block',
-                  color: '#334155',
-                  fontSize: 12.5,
-                  fontWeight: 700,
-                  marginBottom: 6
-                }}
-              >
-                Username
-              </label>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <span style={{
-                  position: 'absolute',
-                  left: 12,
-                  fontSize: 14,
-                  color: '#94a3b8',
-                  pointerEvents: 'none'
-                }}>
-                  📇
-                </span>
-                <input
-                  id="reg-username"
-                  type="text"
-                  value={form.username}
-                  onChange={(e) => setForm({ ...form, username: e.target.value })}
-                  placeholder="e.g. ahmadfauzi"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px 10px 36px',
-                    background: '#f8fafc',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: 8,
-                    color: '#0f172a',
-                    fontSize: 13.5,
-                    boxSizing: 'border-box',
-                    outline: 'none',
-                    transition: 'border-color 0.15s, background-color 0.15s'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#0284c7'
-                    e.target.style.backgroundColor = '#ffffff'
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#cbd5e1'
-                    e.target.style.backgroundColor = '#f8fafc'
-                  }}
-                />
-              </div>
-            </div>
+            <FormField
+              label="Username"
+              placeholder="Masukkan username akun Anda"
+              required
+              helperText="Hanya boleh huruf, angka, dan underscore (_)"
+              {...getFieldProps('username')}
+            />
 
-            {/* Input Password */}
-            <div style={{ marginBottom: 14 }}>
-              <label
-                htmlFor="reg-password"
-                style={{
-                  display: 'block',
-                  color: '#334155',
-                  fontSize: 12.5,
-                  fontWeight: 700,
-                  marginBottom: 6
-                }}
-              >
-                Password (Min. 6 Karakter)
-              </label>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <span style={{
-                  position: 'absolute',
-                  left: 12,
-                  fontSize: 14,
-                  color: '#94a3b8',
-                  pointerEvents: 'none'
-                }}>
-                  🔒
-                </span>
-                <input
-                  id="reg-password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  placeholder="••••••••"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '10px 38px 10px 36px',
-                    background: '#f8fafc',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: 8,
-                    color: '#0f172a',
-                    fontSize: 13.5,
-                    boxSizing: 'border-box',
-                    outline: 'none',
-                    transition: 'border-color 0.15s, background-color 0.15s'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#0284c7'
-                    e.target.style.backgroundColor = '#ffffff'
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#cbd5e1'
-                    e.target.style.backgroundColor = '#f8fafc'
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label="Toggle password visibility"
-                  style={{
-                    position: 'absolute',
-                    right: 8,
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: 14,
-                    color: '#64748b',
-                    padding: '4px 6px'
-                  }}
-                >
-                  {showPassword ? '🙈' : '👁️'}
-                </button>
-              </div>
-            </div>
+            <FormField
+              label="Password (Min. 6 Karakter)"
+              type="password"
+              placeholder="Masukkan password minimal 6 karakter"
+              required
+              {...getFieldProps('password')}
+            />
 
-            {/* Input Konfirmasi Password */}
-            <div style={{ marginBottom: 20 }}>
-              <label
-                htmlFor="reg-konfirmasi"
-                style={{
-                  display: 'block',
-                  color: '#334155',
-                  fontSize: 12.5,
-                  fontWeight: 700,
-                  marginBottom: 6
-                }}
-              >
-                Konfirmasi Password
-              </label>
-              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                <span style={{
-                  position: 'absolute',
-                  left: 12,
-                  fontSize: 14,
-                  color: '#94a3b8',
-                  pointerEvents: 'none'
-                }}>
-                  🔒
-                </span>
-                <input
-                  id="reg-konfirmasi"
-                  type={showKonfirmasi ? 'text' : 'password'}
-                  value={form.konfirmasi_password}
-                  onChange={(e) => setForm({ ...form, konfirmasi_password: e.target.value })}
-                  placeholder="••••••••"
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '10px 38px 10px 36px',
-                    background: '#f8fafc',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: 8,
-                    color: '#0f172a',
-                    fontSize: 13.5,
-                    boxSizing: 'border-box',
-                    outline: 'none',
-                    transition: 'border-color 0.15s, background-color 0.15s'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#0284c7'
-                    e.target.style.backgroundColor = '#ffffff'
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#cbd5e1'
-                    e.target.style.backgroundColor = '#f8fafc'
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowKonfirmasi(!showKonfirmasi)}
-                  aria-label="Toggle confirmation password visibility"
-                  style={{
-                    position: 'absolute',
-                    right: 8,
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: 14,
-                    color: '#64748b',
-                    padding: '4px 6px'
-                  }}
-                >
-                  {showKonfirmasi ? '🙈' : '👁️'}
-                </button>
-              </div>
-            </div>
+            <FormField
+              label="Konfirmasi Password"
+              type="password"
+              placeholder="Ulangi password Anda"
+              required
+              {...getFieldProps('konfirmasi_password')}
+            />
 
             {/* Tombol Submit Pendaftaran */}
             <button
               id="btn-submit-register"
               type="submit"
-              disabled={loading || sukses}
+              disabled={loading || isSubmitting || sukses}
               style={{
                 width: '100%',
                 padding: '11px 16px',
@@ -498,22 +271,24 @@ export default function RegisterPage() {
                 borderRadius: 8,
                 fontSize: 14,
                 fontWeight: 700,
-                cursor: (loading || sukses) ? 'not-allowed' : 'pointer',
-                opacity: (loading || sukses) ? 0.75 : 1,
+                cursor: (loading || isSubmitting || sukses) ? 'not-allowed' : 'pointer',
+                opacity: (loading || isSubmitting || sukses) ? 0.75 : 1,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: 8,
                 boxShadow: '0 4px 12px rgba(15, 23, 42, 0.25)',
-                transition: 'background 0.15s, transform 0.1s'
+                transition: 'background 0.15s, transform 0.1s',
+                marginTop: 6,
               }}
-              onMouseEnter={(e) => { if (!loading && !sukses) e.currentTarget.style.background = '#1e293b' }}
-              onMouseLeave={(e) => { if (!loading && !sukses) e.currentTarget.style.background = '#0f172a' }}
+              onMouseEnter={(e) => { if (!loading && !isSubmitting && !sukses) e.currentTarget.style.background = '#1e293b' }}
+              onMouseLeave={(e) => { if (!loading && !isSubmitting && !sukses) e.currentTarget.style.background = '#0f172a' }}
             >
-              <span>{loading ? 'Mendaftarkan Akun...' : 'Daftar Sekarang'}</span>
+              <span>{loading || isSubmitting ? 'Memproses Pendaftaran...' : 'Daftar Sekarang'}</span>
               <span style={{ fontSize: 15 }}>→</span>
             </button>
           </form>
+
 
           {/* Divider */}
           <div style={{
@@ -546,7 +321,6 @@ export default function RegisterPage() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 8,
               boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
               boxSizing: 'border-box',
               transition: 'all 0.15s'
@@ -560,7 +334,6 @@ export default function RegisterPage() {
               e.currentTarget.style.borderColor = '#cbd5e1'
             }}
           >
-            <span>🔑</span>
             <span>Masuk ke Akun Terdaftar</span>
           </Link>
 
@@ -572,21 +345,17 @@ export default function RegisterPage() {
                 color: '#64748b',
                 fontSize: 12,
                 textDecoration: 'none',
-                fontWeight: 600,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 5
+                fontWeight: 600
               }}
             >
-              <span>←</span>
-              <span>Kembali ke Dasbor Harga (Tanpa Akun)</span>
+              Kembali ke Dasbor Harga (Tanpa Akun)
             </Link>
           </div>
 
-          {/* Security Status Box */}
+          {/* Security Status Box (Clean tanpa emoji) */}
           <div style={{
             marginTop: 18,
-            padding: '10px 12px',
+            padding: '10px 14px',
             background: '#f8fafc',
             border: '1px solid #e2e8f0',
             borderRadius: 8,
@@ -595,14 +364,8 @@ export default function RegisterPage() {
             justifyContent: 'space-between',
             fontSize: 11
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#334155' }}>
-              <span style={{ color: '#0284c7' }}>🔒</span>
-              <span style={{ fontWeight: 600 }}>Enkripsi TLS 1.3 End-to-End</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#059669', fontWeight: 600 }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
-              <span>Node Lamongan: Aktif</span>
-            </div>
+            <span style={{ color: '#475569', fontWeight: 600 }}>Enkripsi TLS 1.3 End-to-End</span>
+            <span style={{ color: '#059669', fontWeight: 600 }}>Node Lamongan: Aktif</span>
           </div>
         </div>
       </div>
@@ -620,7 +383,7 @@ export default function RegisterPage() {
         justifyContent: 'center',
         zIndex: 1
       }}>
-        <span>🏛️ Dinas PU Bina Marga & Cipta Karya Kab. Lamongan</span>
+        <span>Dinas PU Bina Marga & Cipta Karya Kab. Lamongan</span>
         <span>•</span>
         <span>Panduan Teknis</span>
         <span>•</span>

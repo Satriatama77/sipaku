@@ -1,6 +1,10 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { IconShield } from '../../components/Icons'
+import AlertBox from '../../components/ui/AlertBox'
+import FormField from '../../components/ui/FormField'
+import { useFormValidation, validators } from '../../hooks/useFormValidation'
 
 const ROLE_HOME = {
   penjual: '/penjual',
@@ -9,21 +13,78 @@ const ROLE_HOME = {
 }
 
 export default function LoginPage() {
-  const [form, setForm]                 = useState({ username: '', password: '' })
-  const [showPassword, setShowPassword] = useState(false)
-  const [activeTab, setActiveTab]       = useState('admin') // 'admin' | 'penjual' | 'pembeli'
-  const [error, setError]               = useState('')
-  const [loading, setLoading]           = useState(false)
-  const { login }                       = useAuth()
-  const navigate                        = useNavigate()
+  const location = useLocation()
+  const [activeTab, setActiveTab]   = useState(location.state?.tab || 'admin') // 'admin' | 'penjual' | 'pembeli'
+  const [infoNotice, setInfoNotice] = useState(() => {
+    if (location.state?.logout) return ''
+    return location.state?.message || ''
+  })
+  const [error, setError]           = useState('')
+  const [loading, setLoading]       = useState(false)
+  const { login }                   = useAuth()
+  const navigate                    = useNavigate()
 
-  const doLogin = async (username, password) => {
+  // Sinkronkan state navigasi jika ada pengalihan baru
+  useEffect(() => {
+    if (location.state?.logout) {
+      setInfoNotice('')
+    } else if (location.state?.message) {
+      setInfoNotice(location.state.message)
+    }
+    if (location.state?.tab) {
+      setActiveTab(location.state.tab)
+    }
+  }, [location.state])
+
+
+  // Ambil redirect param (misal dari interceptor 401 saat sesi kedaluwarsa)
+  const searchParams = new URLSearchParams(location.search)
+  const redirectParam = searchParams.get('redirect')
+
+  // Inisialisasi useFormValidation
+  const {
+    isSubmitting,
+    handleSubmit,
+    getFieldProps,
+  } = useFormValidation(
+    {
+      username: '',
+      password: '',
+    },
+    {
+      username: [validators.required('Username wajib diisi')],
+      password: [validators.required('Password wajib diisi')],
+    }
+  )
+
+  const doLogin = async (vals) => {
     setError('')
     setLoading(true)
     try {
-      const data = await login(username, password)
+      // Kirim activeTab sebagai expected_role agar divalidasi ketat oleh Backend
+      const data = await login(vals.username.trim(), vals.password, activeTab)
       const role = data.role?.toLowerCase()
-      navigate(ROLE_HOME[role] ?? '/pembeli')
+
+      // Jika ada redirect url dari 401 interceptor
+      if (redirectParam && redirectParam.startsWith('/')) {
+        navigate(redirectParam)
+        return
+      }
+
+      // Navigasi tegas sesuai peran akun (RBAC):
+      if (role === 'admin') {
+        navigate('/admin')
+      } else if (role === 'penjual') {
+        navigate('/penjual')
+      } else if (role === 'pembeli') {
+        if (location.state?.redirectTo && location.state.redirectTo.startsWith('/pembeli')) {
+          navigate(location.state.redirectTo)
+        } else {
+          navigate('/pembeli')
+        }
+      } else {
+        navigate(ROLE_HOME[role] ?? '/pembeli')
+      }
     } catch (err) {
       if (!err.response) {
         setError('Gagal terhubung ke server backend (http://localhost:8000). Pastikan backend FastAPI aktif.')
@@ -35,16 +96,12 @@ export default function LoginPage() {
     }
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    await doLogin(form.username, form.password)
-  }
 
   // Placeholder dinamis berdasarkan tab yang dipilih
   const getUsernamePlaceholder = () => {
-    if (activeTab === 'admin') return 'Masukkan username Admin PU / Pegawai'
-    if (activeTab === 'penjual') return 'Masukkan username Toko Bangunan'
-    return 'Masukkan username Pembeli / Warga'
+    if (activeTab === 'admin') return 'Masukkan username admin'
+    if (activeTab === 'penjual') return 'Masukkan username pemilik toko'
+    return 'Masukkan username publik/warga'
   }
 
   return (
@@ -65,7 +122,7 @@ export default function LoginPage() {
       position: 'relative',
       fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif"
     }}>
-      {/* Decorative Radar/Concentric Rings Accent (Subtle Background seperti mockup) */}
+      {/* Decorative Radar/Concentric Rings Accent (Subtle Background) */}
       <div style={{
         position: 'absolute',
         top: '50%',
@@ -74,7 +131,7 @@ export default function LoginPage() {
         width: 720,
         height: 720,
         borderRadius: '50%',
-        border: '1px dashed rgba(148, 163, 184, 0.28)',
+        border: '1px dashed rgba(148, 163, 184, 0.25)',
         pointerEvents: 'none',
         zIndex: 0
       }} />
@@ -86,7 +143,7 @@ export default function LoginPage() {
         width: 960,
         height: 960,
         borderRadius: '50%',
-        border: '1px solid rgba(148, 163, 184, 0.15)',
+        border: '1px solid rgba(148, 163, 184, 0.12)',
         pointerEvents: 'none',
         zIndex: 0
       }} />
@@ -150,22 +207,20 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Pill Banner Kedinasan */}
+            {/* Pill Banner Kedinasan (Clean tanpa emoji) */}
             <div>
               <span style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 5,
                 background: '#f8fafc',
                 border: '1px solid #e2e8f0',
-                color: '#334155',
+                color: '#475569',
                 fontSize: 10,
                 fontWeight: 700,
-                padding: '3px 10px',
+                padding: '4px 12px',
                 borderRadius: 9999,
-                letterSpacing: '0.02em'
+                letterSpacing: '0.04em'
               }}>
-                <span>🏛️</span>
                 PEMERINTAH KABUPATEN LAMONGAN • DINAS PU BM & CK
               </span>
             </div>
@@ -190,7 +245,19 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Role Switcher Tabs (Admin PU, Toko Bangunan, Publik/Warga) */}
+          {/* Akses Dibatasi Alert (Jika redirect dari Kanal Pengaduan) */}
+          {infoNotice && (
+            <AlertBox
+              variant="info"
+              title={location.state?.title || "Akses Terbatas Kanal Pengaduan"}
+              style={{ marginBottom: 16 }}
+            >
+              {infoNotice}
+            </AlertBox>
+          )}
+
+
+          {/* Role Switcher Tabs (admin, pemilik toko, publik/warga - clean tanpa icon) */}
           <div style={{
             display: 'flex',
             background: '#f1f5f9',
@@ -200,20 +267,25 @@ export default function LoginPage() {
             marginBottom: 20
           }}>
             {[
-              { id: 'admin', label: 'Admin PU / Verlap', icon: '👤' },
-              { id: 'penjual', label: 'Toko Bangunan', icon: '🏬' },
-              { id: 'pembeli', label: 'Publik / Warga', icon: '👥' },
+              { id: 'admin', label: 'admin' },
+              { id: 'penjual', label: 'pemilik toko' },
+              { id: 'pembeli', label: 'publik/warga' },
             ].map((tab) => {
               const isActive = activeTab === tab.id
               return (
                 <button
                   key={tab.id}
                   type="button"
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => {
+                    setActiveTab(tab.id)
+                    if (tab.id !== 'pembeli') {
+                      setInfoNotice('')
+                    }
+                  }}
                   style={{
                     flex: 1,
-                    padding: '7px 4px',
-                    fontSize: 11.5,
+                    padding: '8px 4px',
+                    fontSize: 12,
                     fontWeight: isActive ? 700 : 600,
                     color: isActive ? '#0f172a' : '#64748b',
                     background: isActive ? '#ffffff' : 'transparent',
@@ -221,15 +293,11 @@ export default function LoginPage() {
                     borderRadius: 7,
                     boxShadow: isActive ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                     cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 5,
+                    textTransform: 'capitalize',
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <span style={{ fontSize: 12 }}>{tab.icon}</span>
-                  <span>{tab.label}</span>
+                  {tab.label}
                 </button>
               )
             })}
@@ -237,183 +305,92 @@ export default function LoginPage() {
 
           {/* Error Alert */}
           {error && (
-            <div style={{
-              background: '#fef2f2',
-              border: '1px solid #fecaca',
-              color: '#b91c1c',
-              padding: '10px 14px',
-              borderRadius: 8,
-              marginBottom: 16,
-              fontSize: 12.5,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8
-            }}>
-              <span>⚠️</span>
+            <AlertBox
+              variant="forbidden"
+              title="Otorisasi Gagal"
+              style={{ marginBottom: 16 }}
+              actions={
+                <div>
+                  {error.includes('Publik/Warga') && activeTab !== 'pembeli' && (
+                    <button
+                      type="button"
+                      onClick={() => { setActiveTab('pembeli'); setError('') }}
+                      style={{
+                        background: '#dc2626',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 6,
+                        padding: '6px 14px',
+                        fontSize: 11.5,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'inline-block'
+                      }}
+                    >
+                      Buka Tab Publik/Warga →
+                    </button>
+                  )}
+                  {error.includes('Pemilik Toko') && activeTab !== 'penjual' && (
+                    <button
+                      type="button"
+                      onClick={() => { setActiveTab('penjual'); setError('') }}
+                      style={{
+                        background: '#dc2626',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 6,
+                        padding: '6px 14px',
+                        fontSize: 11.5,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'inline-block'
+                      }}
+                    >
+                      Buka Tab Pemilik Toko →
+                    </button>
+                  )}
+                  {error.includes('Administrator PU') && activeTab !== 'admin' && (
+                    <button
+                      type="button"
+                      onClick={() => { setActiveTab('admin'); setError('') }}
+                      style={{
+                        background: '#dc2626',
+                        color: '#ffffff',
+                        border: 'none',
+                        borderRadius: 6,
+                        padding: '6px 14px',
+                        fontSize: 11.5,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'inline-block'
+                      }}
+                    >
+                      Buka Tab Admin →
+                    </button>
+                  )}
+                </div>
+              }
+            >
               <span>{error}</span>
-            </div>
+            </AlertBox>
           )}
 
           {/* Form Login: User & Password */}
-          <form onSubmit={handleSubmit}>
-            {/* Input Username */}
-            <div style={{ marginBottom: 14 }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: 6
-              }}>
-                <label
-                  htmlFor="username"
-                  style={{
-                    color: '#334155',
-                    fontSize: 12.5,
-                    fontWeight: 700,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6
-                  }}
-                >
-                  <span>📇</span>
-                  <span>Username Akun</span>
-                </label>
-                <span style={{ fontSize: 11, color: '#0284c7', fontWeight: 600 }}>
-                  Akses Sistem
-                </span>
-              </div>
-              <div style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-                <span style={{
-                  position: 'absolute',
-                  left: 12,
-                  fontSize: 14,
-                  color: '#94a3b8',
-                  pointerEvents: 'none'
-                }}>
-                  👤
-                </span>
-                <input
-                  id="username"
-                  type="text"
-                  value={form.username}
-                  onChange={(e) => setForm({ ...form, username: e.target.value })}
-                  placeholder={getUsernamePlaceholder()}
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px 10px 36px',
-                    background: '#f8fafc',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: 8,
-                    color: '#0f172a',
-                    fontSize: 13.5,
-                    boxSizing: 'border-box',
-                    outline: 'none',
-                    transition: 'border-color 0.15s, background-color 0.15s'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#0284c7'
-                    e.target.style.backgroundColor = '#ffffff'
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#cbd5e1'
-                    e.target.style.backgroundColor = '#f8fafc'
-                  }}
-                  required
-                />
-              </div>
-            </div>
+          <form onSubmit={handleSubmit(doLogin)} noValidate>
+            <FormField
+              label="Username"
+              placeholder={getUsernamePlaceholder()}
+              required
+              {...getFieldProps('username')}
+            />
 
-            {/* Input Password */}
-            <div style={{ marginBottom: 16 }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: 6
-              }}>
-                <label
-                  htmlFor="password"
-                  style={{
-                    color: '#334155',
-                    fontSize: 12.5,
-                    fontWeight: 700,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6
-                  }}
-                >
-                  <span>🔑</span>
-                  <span>Kata Sandi / Password</span>
-                </label>
-                <span style={{ fontSize: 11, color: '#64748b', fontWeight: 500 }}>
-                  Aman & Terenkripsi
-                </span>
-              </div>
-              <div style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-                <span style={{
-                  position: 'absolute',
-                  left: 12,
-                  fontSize: 14,
-                  color: '#94a3b8',
-                  pointerEvents: 'none'
-                }}>
-                  🔒
-                </span>
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  placeholder="Masukkan kata sandi Anda"
-                  style={{
-                    width: '100%',
-                    padding: '10px 38px 10px 36px',
-                    background: '#f8fafc',
-                    border: '1px solid #cbd5e1',
-                    borderRadius: 8,
-                    color: '#0f172a',
-                    fontSize: 13.5,
-                    boxSizing: 'border-box',
-                    outline: 'none',
-                    transition: 'border-color 0.15s, background-color 0.15s'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#0284c7'
-                    e.target.style.backgroundColor = '#ffffff'
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#cbd5e1'
-                    e.target.style.backgroundColor = '#f8fafc'
-                  }}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label="Toggle password visibility"
-                  style={{
-                    position: 'absolute',
-                    right: 8,
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: 14,
-                    color: '#64748b',
-                    padding: '4px 6px'
-                  }}
-                >
-                  {showPassword ? '🙈' : '👁️'}
-                </button>
-              </div>
-            </div>
+            <FormField
+              label="Password"
+              type="password"
+              placeholder="Masukkan password Anda"
+              required
+              {...getFieldProps('password')}
+            />
 
             {/* Checkbox Sesi & Status Audit */}
             <div style={{
@@ -432,8 +409,7 @@ export default function LoginPage() {
                 />
                 <span>Ingat sesi di perangkat ini</span>
               </label>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#059669', fontWeight: 600 }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+              <span style={{ color: '#059669', fontWeight: 600 }}>
                 Audit Log Aktif
               </span>
             </div>
@@ -442,7 +418,7 @@ export default function LoginPage() {
             <button
               id="btn-login"
               type="submit"
-              disabled={loading}
+              disabled={loading || isSubmitting}
               style={{
                 width: '100%',
                 padding: '11px 16px',
@@ -452,8 +428,8 @@ export default function LoginPage() {
                 borderRadius: 8,
                 fontSize: 14,
                 fontWeight: 700,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.75 : 1,
+                cursor: (loading || isSubmitting) ? 'not-allowed' : 'pointer',
+                opacity: (loading || isSubmitting) ? 0.75 : 1,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -461,13 +437,14 @@ export default function LoginPage() {
                 boxShadow: '0 4px 12px rgba(15, 23, 42, 0.25)',
                 transition: 'background 0.15s, transform 0.1s'
               }}
-              onMouseEnter={(e) => { if (!loading) e.currentTarget.style.background = '#1e293b' }}
-              onMouseLeave={(e) => { if (!loading) e.currentTarget.style.background = '#0f172a' }}
+              onMouseEnter={(e) => { if (!loading && !isSubmitting) e.currentTarget.style.background = '#1e293b' }}
+              onMouseLeave={(e) => { if (!loading && !isSubmitting) e.currentTarget.style.background = '#0f172a' }}
             >
-              <span>{loading ? 'Memproses Masuk...' : 'Masuk ke Sistem SIPAKU'}</span>
+              <span>{loading || isSubmitting ? 'Memproses Masuk...' : 'Masuk ke Sistem SIPAKU'}</span>
               <span style={{ fontSize: 15 }}>→</span>
             </button>
           </form>
+
 
           {/* Divider "ATAU MASUK TERPADU" */}
           <div style={{
@@ -501,7 +478,7 @@ export default function LoginPage() {
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
+              justifyContent: 'center',
               boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
               transition: 'all 0.15s'
             }}
@@ -514,17 +491,13 @@ export default function LoginPage() {
               e.currentTarget.style.borderColor = '#cbd5e1'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 16 }}>📊</span>
-              <span>Buka Dasbor Pembeli (Tanpa Login)</span>
-            </div>
-            <span style={{ color: '#64748b', fontSize: 13 }}>↗</span>
+            <span>Buka Dasbor Pembeli (Tanpa Login)</span>
           </button>
 
-          {/* Security Status Box (Sesuai Mockup) */}
+          {/* Security Status Box (Clean tanpa emoji) */}
           <div style={{
             marginTop: 18,
-            padding: '10px 12px',
+            padding: '10px 14px',
             background: '#f8fafc',
             border: '1px solid #e2e8f0',
             borderRadius: 8,
@@ -533,14 +506,8 @@ export default function LoginPage() {
             justifyContent: 'space-between',
             fontSize: 11
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#334155' }}>
-              <span style={{ color: '#0284c7' }}>🔒</span>
-              <span style={{ fontWeight: 600 }}>Enkripsi TLS 1.3 End-to-End</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#059669', fontWeight: 600 }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
-              <span>Node Lamongan: Aktif</span>
-            </div>
+            <span style={{ color: '#475569', fontWeight: 600 }}>Enkripsi TLS 1.3 End-to-End</span>
+            <span style={{ color: '#059669', fontWeight: 600 }}>Node Lamongan: Aktif</span>
           </div>
 
           {/* Link Daftar Akun Baru */}
@@ -553,7 +520,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Outside Footer Info (Sesuai Mockup) */}
+      {/* Outside Footer Info */}
       <div style={{
         marginTop: 18,
         textAlign: 'center',
@@ -566,7 +533,7 @@ export default function LoginPage() {
         justifyContent: 'center',
         zIndex: 1
       }}>
-        <span>🏛️ Dinas PU Bina Marga & Cipta Karya Kab. Lamongan</span>
+        <span>Dinas PU Bina Marga & Cipta Karya Kab. Lamongan</span>
         <span>•</span>
         <span>Panduan Teknis</span>
         <span>•</span>

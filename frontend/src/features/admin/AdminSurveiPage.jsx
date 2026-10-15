@@ -3,6 +3,7 @@ import { useVoiceRecorder } from '../../hooks/useVoiceRecorder'
 import { parseTeks } from '../../services/voiceService'
 import { getSemuaToko, getKatalogToko, updateKatalogToko } from '../../services/adminService'
 import sshLamongan from '../../data/ssh_lamongan'
+import AlertBox from '../../components/ui/AlertBox'
 
 const CARD = {
   background: '#ffffff',
@@ -221,44 +222,52 @@ export default function AdminSurveiPage() {
 
         {/* Notifikasi Sukses */}
         {pesanSukses && (
-          <div style={{
-            marginBottom: 20,
-            padding: '12px 16px',
-            background: '#dcfce7',
-            border: '1px solid #86efac',
-            borderRadius: 10,
-            color: '#15803d',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>✅ {pesanSukses}</span>
-            <button onClick={() => setPesanSukses(null)} style={{ background: 'transparent', border: 'none', color: '#15803d', cursor: 'pointer', fontSize: 16 }}>✕</button>
-          </div>
+          <AlertBox
+            variant="success"
+            title="Berhasil Disimpan"
+            style={{ marginBottom: 20 }}
+            actions={
+              <button
+                type="button"
+                onClick={() => setPesanSukses(null)}
+                style={{
+                  background: '#047857',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: 6,
+                  padding: '4px 12px',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                Tutup
+              </button>
+            }
+          >
+            {pesanSukses}
+          </AlertBox>
         )}
 
         {/* Peringatan browser tidak support */}
         {!isSupported && (
-          <div style={{
-            marginBottom: 20,
-            padding: '12px 16px',
-            background: '#fef3c7',
-            border: '1px solid #fcd34d',
-            borderRadius: 10,
-            color: '#92400e',
-            fontSize: 12.5
-          }}>
-            ⚠️ <strong>Browser tidak mendukung Speech Recognition.</strong> Gunakan <strong>Google Chrome</strong> atau <strong>Microsoft Edge</strong> terbaru untuk fitur input suara. Anda tetap bisa menggunakan mode <em>Teks Manual</em>.
-          </div>
+          <AlertBox
+            variant="warning"
+            title="Browser Tidak Mendukung Speech Recognition"
+            style={{ marginBottom: 20 }}
+          >
+            Gunakan <strong>Google Chrome</strong> atau <strong>Microsoft Edge</strong> versi modern untuk fitur input suara realtime. Anda tetap dapat menggunakan mode input <em>Teks Manual</em>.
+          </AlertBox>
         )}
+
 
         <div className="dash-split-comparison" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20 }}>
           {/* Kolom Kiri: Pilih Toko & Input Suara */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             {/* Kartu Pilih Toko */}
             <div style={CARD}>
-              <h3 style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span>🏪</span> Toko Bangunan yang Disurvei
+              <h3 style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 800, color: '#0f172a' }}>
+                Toko Bangunan yang Disurvei
               </h3>
               <label style={{ fontSize: 12, color: '#64748b', marginBottom: 6, display: 'block', fontWeight: 600 }}>
                 Pilih Toko Tujuan:
@@ -308,14 +317,14 @@ export default function AdminSurveiPage() {
             {/* Kartu Perekaman / Input Suara */}
             <div style={CARD}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span>🎙️</span> Rekam Perintah Suara (NLP)
+                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: '#0f172a' }}>
+                  Rekam Perintah Suara (NLP)
                 </h3>
                 <div style={{ display: 'flex', gap: 6 }}>
                   <button
                     onClick={() => setModeInput('suara')}
                     style={{
-                      padding: '5px 12px',
+                      padding: '5px 14px',
                       borderRadius: 20,
                       border: '1px solid',
                       borderColor: modeInput === 'suara' ? '#0f172a' : '#cbd5e1',
@@ -326,12 +335,12 @@ export default function AdminSurveiPage() {
                       color: modeInput === 'suara' ? '#fff' : '#475569'
                     }}
                   >
-                    🎙️ Suara
+                    Suara
                   </button>
                   <button
                     onClick={() => setModeInput('teks')}
                     style={{
-                      padding: '5px 12px',
+                      padding: '5px 14px',
                       borderRadius: 20,
                       border: '1px solid',
                       borderColor: modeInput === 'teks' ? '#0f172a' : '#cbd5e1',
@@ -342,7 +351,7 @@ export default function AdminSurveiPage() {
                       color: modeInput === 'teks' ? '#fff' : '#475569'
                     }}
                   >
-                    ✏️ Teks Manual
+                    Teks Manual
                   </button>
                 </div>
               </div>
@@ -359,26 +368,27 @@ export default function AdminSurveiPage() {
                     onClick={isRecording ? handleStopDanProses : startRecording}
                     disabled={loadingNLP || !isSupported}
                     style={{
-                      width: 100,
-                      height: 100,
+                      width: 90,
+                      height: 90,
                       borderRadius: '50%',
                       border: 'none',
                       cursor: (loadingNLP || !isSupported) ? 'not-allowed' : 'pointer',
-                      fontSize: 36,
-                      background: isRecording ? '#dc2626' : 'linear-gradient(135deg, #ea580c, #f97316)',
+                      fontSize: 14,
+                      fontWeight: 800,
+                      background: isRecording ? '#dc2626' : 'linear-gradient(135deg, #0f172a, #1e293b)',
                       boxShadow: isRecording
-                        ? '0 0 0 10px rgba(220, 38, 38, 0.3), 0 0 0 20px rgba(220, 38, 38, 0.1)'
-                        : '0 0 0 8px rgba(234, 88, 12, 0.2)',
-                      transition: 'all 0.3s ease',
+                        ? '0 0 0 8px rgba(220, 38, 38, 0.25)'
+                        : '0 4px 14px rgba(15, 23, 42, 0.2)',
+                      transition: 'all 0.25s ease',
                       color: '#fff',
                       opacity: (!isSupported) ? 0.5 : 1,
                     }}
                   >
-                    {isRecording ? '⏹' : '🎙️'}
+                    {isRecording ? 'Berhenti' : 'Rekam'}
                   </button>
 
                   <p style={{ color: isRecording ? '#dc2626' : '#64748b', marginTop: 16, fontSize: 13, fontWeight: isRecording ? 600 : 400 }}>
-                    {isRecording ? '🔴 Merekam ucapan... Klik untuk selesai & proses' : 'Klik mikrofon untuk mulai merekam'}
+                    {isRecording ? 'Merekam ucapan... Klik untuk selesai & proses' : 'Klik tombol untuk mulai merekam'}
                   </p>
 
                   {micError && <p style={{ color: '#dc2626', fontSize: 12, marginTop: 8 }}>{micError}</p>}
@@ -415,7 +425,7 @@ export default function AdminSurveiPage() {
                         marginTop: 14,
                         width: '100%',
                         padding: '10px',
-                        background: loadingNLP ? '#94a3b8' : 'linear-gradient(135deg, #ea580c, #f97316)',
+                        background: loadingNLP ? '#94a3b8' : 'linear-gradient(135deg, #0f172a, #1e293b)',
                         color: '#fff',
                         border: 'none',
                         borderRadius: 8,
@@ -424,7 +434,7 @@ export default function AdminSurveiPage() {
                         fontSize: 14,
                       }}
                     >
-                      {loadingNLP ? '⚡ Memproses NLP...' : '⚡ Ekstrak Harga via NLP'}
+                      {loadingNLP ? 'Memproses NLP...' : 'Ekstrak Harga via NLP'}
                     </button>
                   )}
 
@@ -434,7 +444,7 @@ export default function AdminSurveiPage() {
                       onClick={() => { resetTranscript(); setHasilParse(null); setTranskripTeks('') }}
                       style={{ marginTop: 8, width: '100%', padding: '8px', background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
                     >
-                      🔄 Rekam Ulang
+                      Rekam Ulang
                     </button>
                   )}
                 </div>
@@ -478,7 +488,7 @@ export default function AdminSurveiPage() {
                       opacity: (!teksManual.trim() || loadingNLP) ? 0.6 : 1
                     }}
                   >
-                    {loadingNLP ? '⏳ Sedang Memparsing...' : '⚡ Proses Parsing NLP'}
+                    {loadingNLP ? 'Sedang Memparsing...' : 'Proses Parsing NLP'}
                   </button>
                 </div>
               )}
@@ -489,18 +499,16 @@ export default function AdminSurveiPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             {/* Kartu Hasil Parsing */}
             <div style={CARD}>
-              <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span>🤖</span> Hasil Ekstraksi AI / NLP
+              <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 800, color: '#0f172a' }}>
+                Hasil Ekstraksi AI / NLP
               </h3>
 
               {loadingNLP ? (
                 <div style={{ padding: '36px 16px', textAlign: 'center', color: '#0284c7' }}>
-                  <div style={{ fontSize: 32, marginBottom: 8 }}>⚡</div>
                   <p style={{ margin: 0, fontSize: 13, fontWeight: 600 }}>Memproses teks dengan NLP...</p>
                 </div>
               ) : !hasilParse ? (
                 <div style={{ padding: '36px 16px', textAlign: 'center', color: '#94a3b8', background: '#f8fafc', borderRadius: 10, border: '1px dashed #e2e8f0' }}>
-                  <div style={{ fontSize: 32, marginBottom: 8 }}>🎙️</div>
                   <p style={{ margin: 0, fontSize: 13 }}>Rekam ucapan survei atau jalankan teks manual untuk melihat hasil parsing NLP.</p>
                 </div>
               ) : (
@@ -542,7 +550,7 @@ export default function AdminSurveiPage() {
                           color: hasilParse.confidence === 'high' ? '#15803d' : '#92400e',
                           border: `1px solid ${hasilParse.confidence === 'high' ? '#86efac' : '#fcd34d'}`,
                         }}>
-                          {hasilParse.confidence === 'high' ? '✓ Tinggi (Akurat)' : '⚠ Perlu Verifikasi'}
+                          {hasilParse.confidence === 'high' ? 'Tinggi (Akurat)' : 'Perlu Verifikasi'}
                         </span>
                       </div>
                     </div>
@@ -566,7 +574,7 @@ export default function AdminSurveiPage() {
                         <span style={{ color: '#64748b' }}>Selisih terhadap SSH:</span>
                         <strong style={{ color: disparitas.isTinggi ? '#b91c1c' : '#15803d' }}>
                           {disparitas.persen > 0 ? `+${disparitas.persen}%` : `${disparitas.persen}%`}
-                          {disparitas.isTinggi ? ' ⚠ Disparitas Signifikan' : ' ✓ Wajar'}
+                          {disparitas.isTinggi ? ' (Disparitas Signifikan)' : ' (Wajar)'}
                         </strong>
                       </div>
                     </div>
@@ -595,7 +603,7 @@ export default function AdminSurveiPage() {
                       transition: 'background 0.2s',
                     }}
                   >
-                    <span>✓</span> {simpanLoading ? 'Menyimpan...' : `Simpan ke Katalog ${tokoAktif?.nama_toko || 'Toko'}`}
+                    <span>{simpanLoading ? 'Menyimpan...' : `Simpan ke Katalog ${tokoAktif?.nama_toko || 'Toko'}`}</span>
                   </button>
                   {hasilParse.confidence !== 'high' && (
                     <p style={{ fontSize: 11, color: '#92400e', textAlign: 'center', marginTop: 6 }}>
@@ -613,7 +621,7 @@ export default function AdminSurveiPage() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <div style={{ borderLeft: '3px solid #0f172a', paddingLeft: 10 }}>
               <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#0f172a' }}>
-                📋 Katalog Harga Saat Ini — {tokoAktif?.nama_toko || 'Toko'}
+                Katalog Harga Saat Ini — {tokoAktif?.nama_toko || 'Toko'}
               </h3>
               <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: 13 }}>
                 Daftar harga material toko yang telah diverifikasi dan disinkronkan oleh Admin survei.

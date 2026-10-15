@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect } from 'react'
 import { login as apiLogin, logout as apiLogout, register as apiRegister, getCurrentUser } from '../services/authService'
 
 const AuthContext = createContext(null)
@@ -6,8 +6,19 @@ const AuthContext = createContext(null)
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => getCurrentUser())
 
-  const login = useCallback(async (username, password) => {
-    const data = await apiLogin(username, password)
+  // Sinkronkan logout otomatis dari Axios interceptor (misal saat error 401)
+  useEffect(() => {
+    const handleLogoutEvent = () => {
+      setUser(null)
+    }
+    window.addEventListener('sipaku-logout', handleLogoutEvent)
+    return () => {
+      window.removeEventListener('sipaku-logout', handleLogoutEvent)
+    }
+  }, [])
+
+  const login = useCallback(async (username, password, expectedRole = null) => {
+    const data = await apiLogin(username, password, expectedRole)
     setUser({ role: data.role, nama_lengkap: data.nama_lengkap, username, id_toko: data.id_toko })
     return data
   }, [])
@@ -22,6 +33,7 @@ export function AuthProvider({ children }) {
     apiLogout()
     setUser(null)
   }, [])
+
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout, isLoggedIn: !!user }}>

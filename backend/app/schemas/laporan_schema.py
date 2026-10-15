@@ -8,6 +8,7 @@ class LaporanCreate(BaseModel):
     nama_material: str
     harga_temuan: float          # Harga yang ditemukan warga (Rp)
     satuan: str                  # misal: "zak", "batang", "m3"
+    nama_pelapor: Optional[str] = "Warga Anonim"
     foto_url: Optional[str] = None   # URL file yang diupload
 
 class LaporanResponse(BaseModel):

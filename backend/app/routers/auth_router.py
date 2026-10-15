@@ -40,6 +40,25 @@ def login(request: LoginRequest, conn=Depends(get_db)):
     if not user:
         raise HTTPException(status_code=401, detail="Username atau password salah")
 
+    # Validasi kesesuaian role dengan portal/tab yang dipilih (RBAC Login Enforcement)
+    if request.expected_role:
+        from app.dependencies import normalize_role
+        user_norm = normalize_role(user["role"])
+        expected_norm = normalize_role(request.expected_role)
+
+        if user_norm != expected_norm:
+            ROLE_LABELS = {
+                "admin": "Administrator PU",
+                "penjual": "Pemilik Toko",
+                "pembeli": "Publik/Warga",
+            }
+            user_lbl = ROLE_LABELS.get(user_norm, user["role"])
+            expected_lbl = ROLE_LABELS.get(expected_norm, request.expected_role)
+            raise HTTPException(
+                status_code=403,
+                detail=f"Akses Ditolak (403): Akun '{request.username}' terdaftar sebagai '{user_lbl}', bukan '{expected_lbl}'. Silakan masuk melalui tab yang sesuai."
+            )
+
     token = create_access_token({
         "sub": str(user["id_user"]),
         "role": user["role"],

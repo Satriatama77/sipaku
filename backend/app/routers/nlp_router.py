@@ -1,8 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from pydantic import BaseModel
 from app.services import nlp_service
+from app.dependencies import require_penjual_or_admin
 
-router = APIRouter(prefix="/api/nlp", tags=["NLP Voice Input"])
+router = APIRouter(
+    prefix="/api/nlp",
+    tags=["NLP Voice Input"],
+    dependencies=[Depends(require_penjual_or_admin)]
+)
 
 
 class TeksInput(BaseModel):

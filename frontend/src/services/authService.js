@@ -1,7 +1,11 @@
 import api from './api'
 
-export const login = async (username, password) => {
-  const res = await api.post('/api/auth/login', { username, password })
+export const login = async (username, password, expected_role = null) => {
+  const payload = { username, password }
+  if (expected_role) {
+    payload.expected_role = expected_role
+  }
+  const res = await api.post('/api/auth/login', payload)
   const { access_token, role, nama_lengkap, id_toko } = res.data
   // Simpan token dan info user ke sessionStorage (otomatis terhapus saat tab/browser ditutup)
   sessionStorage.setItem('sipaku_token', access_token)

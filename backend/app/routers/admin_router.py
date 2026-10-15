@@ -1,10 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException
+from app.dependencies import require_admin
 from app.schemas.laporan_schema import LaporanStatusUpdate
 from app.schemas.katalog_schema import TokoCreate
 from app.services import laporan_service, katalog_service
 from app.database import get_db
 
-router = APIRouter(prefix="/api/admin", tags=["Admin - Dinas PU"])
+router = APIRouter(
+    prefix="/api/admin",
+    tags=["Admin - Dinas PU"],
+    dependencies=[Depends(require_admin)]
+)
 
 @router.get("/laporan")
 def get_laporan_admin(status: str = None, conn=Depends(get_db)):
