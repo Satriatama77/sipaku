@@ -70,6 +70,35 @@ def perbarui_harga(conn, id_toko: int, katalog: KatalogUpdate) -> dict:
     cursor.close()
     return {"status": "berhasil", "material": katalog.nama_material, "harga_baru": katalog.harga_jual}
 
+def perbarui_harga_batch(conn, id_toko: int, list_katalog: list[KatalogUpdate]) -> dict:
+    """Tambah atau update beberapa harga material sekaligus di katalog toko (Multi-Item)."""
+    cursor = get_cursor(conn)
+    now = datetime.now().isoformat()
+    diperbarui = []
+
+    for item in list_katalog:
+        cursor.execute(
+            "SELECT id_katalog FROM katalog_harga WHERE id_toko = %s AND nama_material = %s",
+            (id_toko, item.nama_material)
+        )
+        existing = cursor.fetchone()
+
+        if existing:
+            cursor.execute(
+                "UPDATE katalog_harga SET harga_jual = %s, satuan = %s, stok_tersedia = %s, terakhir_diperbarui = %s WHERE id_katalog = %s",
+                (item.harga_jual, item.satuan, item.stok_tersedia, now, existing["id_katalog"])
+            )
+        else:
+            cursor.execute(
+                "INSERT INTO katalog_harga (id_toko, nama_material, harga_jual, satuan, stok_tersedia, terakhir_diperbarui) VALUES (%s, %s, %s, %s, %s, %s)",
+                (id_toko, item.nama_material, item.harga_jual, item.satuan, item.stok_tersedia, now)
+            )
+        diperbarui.append({"material": item.nama_material, "harga_jual": item.harga_jual, "satuan": item.satuan})
+
+    conn.commit()
+    cursor.close()
+    return {"status": "berhasil", "total_disimpan": len(diperbarui), "data": diperbarui}
+
 def ambil_daftar_kecamatan(conn) -> list[dict]:
     """Ambil daftar semua kecamatan di Lamongan."""
     cursor = get_cursor(conn)
@@ -110,9 +139,8 @@ def tambah_toko_dan_akun(conn, nama_toko: str, nama_pemilik: str, id_kecamatan: 
         conn.commit()
         id_toko = cursor.lastrowid
 
-        # 2. Buat username otomatis: penjual_<nama_toko_clean>
-        clean_nama = re.sub(r'[^a-zA-Z0-9]+', '_', nama_toko.lower()).strip('_')
-        base_username = f"penjual_{clean_nama}"[:40]
+        # 2. Buat username otomatis: penjual{id_toko} (contoh: penjual1, penjual2, dst.)
+        base_username = f"penjual{id_toko}"
         username = base_username
 
         # Cek keunikan username

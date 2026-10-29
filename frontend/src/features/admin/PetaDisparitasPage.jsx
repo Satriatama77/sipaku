@@ -114,33 +114,34 @@ export default function PetaDisparitasPage() {
         
         {/* Header Geospasial */}
         <section className="hero-banner-box" style={{ marginBottom: 20 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 14, marginBottom: 14 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 14, marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
               <span style={{
-                background: '#ea580c',
-                color: '#ffffff',
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: '#f8fafc',
                 fontSize: 11,
-                fontWeight: 800,
+                fontWeight: 750,
                 padding: '4px 10px',
-                borderRadius: 4,
+                borderRadius: 6,
+                border: '1px solid rgba(255, 255, 255, 0.15)',
                 letterSpacing: '0.04em'
               }}>
                 SIPAKU GEOSPASIAL
               </span>
               <span style={{
                 background: 'rgba(16, 185, 129, 0.15)',
-                color: '#34d399',
+                color: '#6ee7b7',
                 fontSize: 11,
-                fontWeight: 700,
-                padding: '3px 9px',
+                fontWeight: 650,
+                padding: '3px 10px',
                 borderRadius: 20,
                 border: '1px solid rgba(16, 185, 129, 0.3)',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 5
               }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399' }} />
-                Koordinat Presisi 27 Kecamatan
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399', boxShadow: '0 0 8px rgba(52, 211, 153, 0.8)' }} />
+                27 Kecamatan Terpetakan
               </span>
             </div>
 
@@ -150,20 +151,22 @@ export default function PetaDisparitasPage() {
                 background: 'rgba(255, 255, 255, 0.1)',
                 border: '1px solid rgba(255, 255, 255, 0.2)',
                 color: '#ffffff',
-                padding: '6px 14px',
-                borderRadius: 6,
+                padding: '7px 14px',
+                borderRadius: 8,
                 fontSize: 12,
                 fontWeight: 600,
-                cursor: 'pointer'
+                cursor: 'pointer',
+                backdropFilter: 'blur(4px)',
+                transition: 'all 0.15s ease'
               }}
             >
               Reset Tampilan Peta
             </button>
           </div>
 
-          <div style={{ maxWidth: 880, marginBottom: 18 }}>
+          <div style={{ maxWidth: 880, marginBottom: 20 }}>
             <h1 style={{
-              fontSize: 'clamp(20px, 3.5vw, 25px)',
+              fontSize: 'clamp(20px, 3.5vw, 24px)',
               fontWeight: 800,
               color: '#ffffff',
               margin: '0 0 6px',
@@ -173,33 +176,34 @@ export default function PetaDisparitasPage() {
               Peta Disparitas Harga Material Kabupaten Lamongan
             </h1>
             <p style={{
-              fontSize: 'clamp(12px, 2vw, 13px)',
-              color: '#94a3b8',
+              fontSize: 13,
+              color: '#cbd5e1',
               margin: 0,
               lineHeight: 1.55
             }}>
-              Dinas Pekerjaan Umum Bina Marga & Cipta Karya — Pemetaan titik koordinat asli pusat 27 kecamatan untuk mendeteksi lonjakan harga material konstruksi terhadap SSH Pemkab.
+              Dinas Pekerjaan Umum Bina Marga &amp; Cipta Karya — Pemetaan sebaran harga di 27 kecamatan untuk mendeteksi disparitas harga material konstruksi secara visual.
             </p>
           </div>
 
           {/* Quick Stats Grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
             {[
-              { label: 'Zona Merah', value: zoneCount.merah, color: '#ef4444', desc: 'Disparitas ≥ 20%' },
-              { label: 'Zona Waspada', value: zoneCount.waspada, color: '#f59e0b', desc: 'Disparitas 10 - 20%' },
-              { label: 'Zona Normal', value: zoneCount.normal, color: '#10b981', desc: 'Disparitas < 10%' },
-              { label: 'Stabil / Terdata', value: zoneCount.stabil, color: '#94a3b8', desc: 'Belum ada lonjakan' },
-              { label: 'Total Kecamatan', value: zoneCount.total, color: '#38bdf8', desc: '100% Wilayah' },
+              { label: 'Zona Merah', value: zoneCount.merah, color: '#f87171', desc: 'Disparitas ≥ 20%' },
+              { label: 'Zona Waspada', value: zoneCount.waspada, color: '#fbbf24', desc: 'Disparitas 10 - 20%' },
+              { label: 'Zona Normal', value: zoneCount.normal, color: '#34d399', desc: 'Disparitas < 10%' },
+              { label: 'Stabil / Terdata', value: zoneCount.stabil, color: '#93c5fd', desc: 'Sesuai Standar HAP' },
+              { label: 'Total Kecamatan', value: zoneCount.total, color: '#ffffff', desc: '100% Wilayah' },
             ].map((s) => (
               <div key={s.label} style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: 8,
-                padding: '10px 14px'
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: 12,
+                padding: '12px 16px',
+                backdropFilter: 'blur(4px)'
               }}>
-                <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600, marginBottom: 2 }}>{s.label}</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</div>
-                <div style={{ fontSize: 10, color: '#64748b', marginTop: 2 }}>{s.desc}</div>
+                <div style={{ fontSize: 11, color: '#cbd5e1', fontWeight: 600, marginBottom: 2 }}>{s.label}</div>
+                <div style={{ fontSize: 24, fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</div>
+                <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{s.desc}</div>
               </div>
             ))}
           </div>

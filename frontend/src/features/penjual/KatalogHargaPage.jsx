@@ -22,26 +22,53 @@ import {
 
 // Spesifikasi SNI standar baku dinas berdasarkan nama material
 const SNI_SPECS = {
-  'semen gresik ppc 50kg': 'SNI 15-7064-2004 • Kategori: Portland Pozzolan',
-  'semen gresik 40kg': 'SNI 15-7064-2004 • Kategori: Portland Pozzolan',
-  'semen tiga roda 40kg': 'SNI 15-2049-2004 • Tipe Portland Komposit',
-  'semen holcim 40kg': 'SNI 15-7064-2004 • Formula Ramah Lingkungan',
-  'besi beton polos 10mm sni (12m)': 'SNI 2052:2017 • Toleransi Diameter ±0.2mm',
-  'besi beton polos 10mm sni': 'SNI 2052:2017 • Toleransi Diameter ±0.2mm',
-  'besi beton polos ø10mm': 'SNI 2052:2017 • Toleransi Diameter ±0.2mm',
-  'besi beton polos ø8mm': 'SNI 2052:2017 • Toleransi Diameter ±0.2mm',
-  'besi beton polos ø12mm': 'SNI 2052:2017 • Baja Tulangan Sirip SNI',
-  'pasir pasang lumajang (m3)': 'SNI 03-2834-2000 • Gradasi Kasar & Bebas Lumpur',
-  'pasir pasang': 'SNI 03-2834-2000 • Gradasi Sedang untuk Mortar',
-  'pasir beton': 'SNI 03-2834-2000 • Agregat Halus Beton Struktural',
-  'bata merah press tikung': 'Spesifikasi Lokal Kab. Lamongan • Ukuran Standar PU',
-  'batu bata merah': 'SNI 15-2094-2000 • Mutu Tingkat I Pembakaran Sempurna',
-  'genteng karangpilang good year': 'SNI 03-2095-1998 • Presisi Kedap Air & Tahan Beban',
-  'cat tembok weathershield 5kg': 'SNI 3564:2014 • Cat Tembok Emulsi Tahan Cuaca',
-  'pipa pvc 4" aw sni': 'SNI 06-0084-2002 • Tekanan Kerja 10 kg/cm²',
-  'baja ringan canal c75 (0.75mm)': 'SNI 8399:2017 • Profil Galvalume Baja Hi-Ten',
-  'keramik lantai 40x40 polos': 'SNI ISO 13006:2014 • Kualitas Grade A Glossy',
-  'kayu kaso 5x7 meranti': 'Standar PU Konstruksi Kelas II • Kering Alami',
+  'semen gresik ppc 50kg': 'SNI 15-7064-2004 • Semen Campuran Standar',
+  'semen gresik 50kg': 'SNI 15-7064-2004 • Semen Standar Umum',
+  'semen gresik 40kg': 'SNI 15-7064-2004 • Semen Campuran Standar',
+  'semen tiga roda 40kg': 'SNI 15-2049-2004 • Semen Serbaguna',
+  'semen tiga roda': 'SNI 15-2049-2004 • Semen Serbaguna',
+  'semen holcim 40kg': 'SNI 15-7064-2004 • Semen Ramah Lingkungan',
+  'semen 40kg': 'SNI 15-7064-2004 • Semen Standar',
+  'semen': 'SNI 15-7064-2004 • Semen Standar',
+  'besi beton 10mm sni': 'SNI 2052:2017 • Besi Beton Standar',
+  'besi beton polos 10mm sni (12m)': 'SNI 2052:2017 • Besi Beton Standar',
+  'besi beton polos 10mm sni': 'SNI 2052:2017 • Besi Beton Standar',
+  'besi beton polos ø10mm': 'SNI 2052:2017 • Besi Beton Standar',
+  'besi beton polos ø8mm': 'SNI 2052:2017 • Besi Beton Standar',
+  'besi beton polos ø12mm': 'SNI 2052:2017 • Besi Beton Berulir',
+  'besi beton ulir ø10mm': 'SNI 2052:2017 • Besi Beton Berulir',
+  'besi beton ulir ø12mm': 'SNI 2052:2017 • Besi Beton Berulir',
+  'pasir pasang lumajang (m3)': 'SNI 03-2834-2000 • Pasir Kasar Bebas Lumpur',
+  'pasir pasang': 'SNI 03-2834-2000 • Pasir untuk Pasangan Batu',
+  'pasir beton': 'SNI 03-2834-2000 • Pasir Halus untuk Beton',
+  'pasir bangunan': 'SNI 03-2834-2000 • Pasir Bangunan Standar',
+  'pasir lumajang': 'SNI 03-2834-2000 • Pasir Lumajang Standar',
+  'pasir urug': 'Standar PU • Pasir untuk Urugan Tanah',
+  'pasir': 'SNI 03-2834-2000 • Pasir Standar',
+  'bata merah press tikung': 'Standar Kab. Lamongan • Ukuran Standar PU',
+  'batu bata merah': 'SNI 15-2094-2000 • Bata Mutu Tinggi',
+  'batako pres': 'Standar PU • Batako Cetak Tekan',
+  'genteng karangpilang good year': 'SNI 03-2095-1998 • Kedap Air & Tahan Beban',
+  'genteng beton': 'SNI 03-2095-1998 • Genteng Beton Standar',
+  'genteng keramik': 'SNI 03-2095-1998 • Genteng Keramik Standar',
+  'cat tembok weathershield 5kg': 'SNI 3564:2014 • Cat Tahan Cuaca',
+  'cat tembok (5kg)': 'SNI 3564:2014 • Cat Tembok Standar',
+  'pipa pvc 4" aw sni': 'SNI 06-0084-2002 • Pipa Air Bertekanan',
+  'pipa pvc 4" aw': 'SNI 06-0084-2002 • Pipa Air Bertekanan',
+  'baja ringan canal c75 (0.75mm)': 'SNI 8399:2017 • Rangka Atap Baja Ringan',
+  'baja ringan (kanal c)': 'SNI 8399:2017 • Rangka Atap Baja Ringan',
+  'keramik lantai 40x40 polos': 'SNI ISO 13006:2014 • Keramik Lantai Standar',
+  'keramik 40x40 (polos)': 'SNI ISO 13006:2014 • Keramik Lantai Standar',
+  'keramik 60x60 (polos)': 'SNI ISO 13006:2014 • Keramik Lantai Besar',
+  'kayu kaso 5x7 meranti': 'Standar PU • Kayu Kaso Konstruksi',
+  'kayu kaso 5x7': 'Standar PU • Kayu Kaso Konstruksi',
+  'kayu papan 3x20': 'Standar PU • Kayu Papan Konstruksi',
+  'kayu konstruksi 6x12': 'Standar PU • Kayu Konstruksi',
+  'triplek 9mm 122x244': 'Standar PU • Triplek Standar',
+  'kerikil / batu pecah': 'SNI 03-2834-2000 • Kerikil Standar Beton',
+  'kerikil': 'SNI 03-2834-2000 • Kerikil Standar',
+  'paku 5cm': 'Standar Umum • Paku Konstruksi',
+  'paku cor': 'Standar Umum • Paku Cor Konstruksi',
 }
 
 export default function KatalogHargaPage() {
@@ -71,6 +98,9 @@ export default function KatalogHargaPage() {
   const [submitting, setSubmitting] = useState(false)
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('')
 
+  const isPenjual = user?.role === 'penjual'
+  const penjualTokoId = isPenjual && user?.id_toko ? Number(user.id_toko) : null
+
   // 1. Fetch Toko & Data SSH
   useEffect(() => {
     Promise.all([
@@ -82,7 +112,10 @@ export default function KatalogHargaPage() {
       setSshData(resSSH.data?.data || [])
 
       let matched = null
-      if (user?.id_toko) {
+      // Jika penjual, KUNCI HANYA ke toko miliknya sendiri
+      if (penjualTokoId) {
+        matched = listToko.find((t) => t.id_toko === penjualTokoId)
+      } else if (user?.id_toko) {
         matched = listToko.find((t) => t.id_toko === Number(user.id_toko))
       } else if (user?.nama_lengkap) {
         matched = listToko.find((t) =>
@@ -95,17 +128,19 @@ export default function KatalogHargaPage() {
       }
 
       if (matched) {
-        setSelectedTokoId(matched.id_toko)
+        const finalId = penjualTokoId || matched.id_toko
+        setSelectedTokoId(finalId)
         setTokoAktif(matched)
       }
     })
-  }, [user])
+  }, [user, penjualTokoId])
 
-  // 2. Fetch Katalog Toko
+  // 2. Fetch Katalog Toko (Terkunci untuk Penjual)
   const fetchKatalog = (id) => {
-    if (!id) return
+    const targetId = penjualTokoId || id
+    if (!targetId) return
     setLoading(true)
-    api.get(`/api/katalog/${id}`)
+    api.get(`/api/katalog/${targetId}`)
       .then((res) => {
         setKatalog(res.data.data || [])
       })
@@ -117,10 +152,11 @@ export default function KatalogHargaPage() {
   }
 
   useEffect(() => {
-    fetchKatalog(selectedTokoId)
-    const t = daftarToko.find((x) => x.id_toko === Number(selectedTokoId))
+    const targetId = penjualTokoId || selectedTokoId
+    fetchKatalog(targetId)
+    const t = daftarToko.find((x) => x.id_toko === Number(targetId))
     if (t) setTokoAktif(t)
-  }, [selectedTokoId, daftarToko])
+  }, [selectedTokoId, daftarToko, penjualTokoId])
 
   // 3. Helper Batas HAP
   const getBatasHAP = (namaMaterial) => {
@@ -264,15 +300,16 @@ export default function KatalogHargaPage() {
     }
 
     setSubmitting(true)
+    const finalTargetId = penjualTokoId || selectedTokoId
     try {
-      await api.put(`/api/katalog/${selectedTokoId}`, {
+      await api.put(`/api/katalog/${finalTargetId}`, {
         nama_material: formNama.trim(),
         harga_jual: numericFormHarga,
         satuan: formSatuan,
         stok_tersedia: formStok
       })
       setSaveSuccessMsg('Data komoditas berhasil diperbarui ke database!')
-      fetchKatalog(selectedTokoId)
+      fetchKatalog(finalTargetId)
       setTimeout(() => {
         setIsModalOpen(false)
         setSaveSuccessMsg('')
@@ -304,9 +341,9 @@ export default function KatalogHargaPage() {
             </p>
           </div>
 
-          {/* Store Switcher & Refresh */}
+          {/* Store Switcher (Hanya untuk Admin PU) & Refresh */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            {daftarToko.length > 1 && (
+            {user?.role === 'admin' && daftarToko.length > 1 && (
               <select
                 value={selectedTokoId}
                 onChange={(e) => setSelectedTokoId(Number(e.target.value))}
@@ -330,7 +367,7 @@ export default function KatalogHargaPage() {
             )}
 
             <button
-              onClick={() => { setRefreshing(true); fetchKatalog(selectedTokoId) }}
+              onClick={() => { setRefreshing(true); fetchKatalog(penjualTokoId || selectedTokoId) }}
               disabled={refreshing}
               style={{
                 background: '#ffffff',
@@ -340,14 +377,10 @@ export default function KatalogHargaPage() {
                 fontSize: 12.5,
                 fontWeight: 600,
                 color: '#334155',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
                 cursor: 'pointer'
               }}
             >
-              <IconRefresh size={13} color="#334155" style={{ transform: refreshing ? 'rotate(180deg)' : 'none', transition: 'transform 0.4s' }} />
-              <span>{refreshing ? 'Memuat...' : 'Refresh'}</span>
+              {refreshing ? 'Memuat...' : 'Refresh'}
             </button>
 
             <button
@@ -360,14 +393,10 @@ export default function KatalogHargaPage() {
                 fontSize: 12.5,
                 fontWeight: 750,
                 color: '#ffffff',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
                 cursor: 'pointer'
               }}
             >
-              <IconPlus size={13} color="#ffffff" />
-              <span>Tambah Komoditas</span>
+              Tambah Komoditas
             </button>
           </div>
         </div>
@@ -445,7 +474,7 @@ export default function KatalogHargaPage() {
           }}>
             <div>
               <span style={{ color: '#64748b' }}>Status Guardrail: </span>
-              <strong style={{ color: '#16a34a' }}>● Real-Time Active</strong>
+              <strong style={{ color: '#16a34a', display: 'inline-flex', alignItems: 'center', gap: 5 }}><span style={{ width: 6, height: 6, borderRadius: '50%', background: '#16a34a' }} />Real-Time Active</strong>
             </div>
             <span style={{ color: '#cbd5e1' }}>|</span>
             <div>
@@ -455,79 +484,52 @@ export default function KatalogHargaPage() {
           </div>
         </div>
 
-        {/* ── 4 RINGKASAN METRIK TOKO (LEBAR 100%) ── */}
+        {/* ── 3 RINGKASAN METRIK TOKO (LEBAR 100%) ── */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
           gap: 16,
           marginBottom: 20
         }}>
-          {/* Card 1 */}
-          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '14px 18px', boxShadow: '0 1px 2px rgba(0,0,0,0.02)' }}>
+          {/* Card 1: Total Komoditas */}
+          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '16px 20px', boxShadow: '0 1px 2px rgba(0,0,0,0.02)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 10.5, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Total Komoditas</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Total Komoditas</span>
               <IconPackage size={18} color="#64748b" />
             </div>
-            <div style={{ fontSize: 24, fontWeight: 850, color: '#0f172a', margin: '4px 0' }}>
-              {totalItem} <span style={{ fontSize: 13, fontWeight: 600, color: '#64748b' }}>Jenis Material</span>
+            <div style={{ fontSize: 26, fontWeight: 850, color: '#0f172a', margin: '6px 0 2px' }}>
+              {totalItem} <span style={{ fontSize: 13, fontWeight: 600, color: '#64748b' }}>Item Bahan</span>
             </div>
-            <div style={{ fontSize: 11, color: '#16a34a', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
-              <IconCheck size={12} color="#16a34a" />
-              <span>Terdaftar di Database Resmi Dinas PU</span>
+            <div style={{ fontSize: 12, color: '#64748b' }}>
+              Tampil di etalase pembeli &amp; masyarakat
             </div>
           </div>
 
-          {/* Card 2 */}
-          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '14px 18px', boxShadow: '0 1px 2px rgba(0,0,0,0.02)' }}>
+          {/* Card 2: Kesesuaian Standar Acuan */}
+          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '16px 20px', boxShadow: '0 1px 2px rgba(0,0,0,0.02)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 10.5, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Kepatuhan Pagu HAP</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Kesesuaian Standar HAP</span>
               <IconScale size={18} color="#64748b" />
             </div>
-            <div style={{ fontSize: 24, fontWeight: 850, color: '#0f172a', margin: '4px 0' }}>
+            <div style={{ fontSize: 26, fontWeight: 850, color: violatingItems > 0 ? '#b45309' : '#16a34a', margin: '6px 0 2px' }}>
               {kepatuhanPersen}%
             </div>
-            <div style={{ fontSize: 11, color: violatingItems === 0 ? '#16a34a' : '#b91c1c', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
-              {violatingItems === 0 ? (
-                <>
-                  <IconCheck size={12} color="#16a34a" />
-                  <span>Nol Pelanggaran Batas Atas HAP</span>
-                </>
-              ) : (
-                <>
-                  <IconAlertTriangle size={12} color="#b91c1c" />
-                  <span>{violatingItems} Item Melebihi Batas HAP</span>
-                </>
-              )}
+            <div style={{ fontSize: 12, color: violatingItems === 0 ? '#16a34a' : '#b45309', fontWeight: 600 }}>
+              {violatingItems === 0 ? 'Semua harga sesuai acuan standar Pemkab' : `${violatingItems} barang di atas batas acuan`}
             </div>
           </div>
 
-          {/* Card 3 */}
-          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '14px 18px', boxShadow: '0 1px 2px rgba(0,0,0,0.02)' }}>
+          {/* Card 3: Stok Tersedia */}
+          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '16px 20px', boxShadow: '0 1px 2px rgba(0,0,0,0.02)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 10.5, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Stok Siap Kirim</span>
-              <IconTruck size={18} color="#0f766e" />
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Ketersediaan Stok</span>
+              <IconCheck size={18} color="#16a34a" />
             </div>
-            <div style={{ fontSize: 24, fontWeight: 850, color: '#0f766e', margin: '4px 0' }}>
-              {tersediaCount} <span style={{ fontSize: 13, fontWeight: 600, color: '#64748b' }}>Material Tersedia</span>
+            <div style={{ fontSize: 26, fontWeight: 850, color: '#0f172a', margin: '6px 0 2px' }}>
+              {tersediaCount} <span style={{ fontSize: 13, fontWeight: 600, color: '#64748b' }}>Siap Jual</span>
             </div>
-            <div style={{ fontSize: 11, color: '#0f766e', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
-              <IconCart size={12} color="#0f766e" />
-              <span>Siap dipesan TPK Proyek Desa</span>
-            </div>
-          </div>
-
-          {/* Card 4 */}
-          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '14px 18px', boxShadow: '0 1px 2px rgba(0,0,0,0.02)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 10.5, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Proteksi Overpricing</span>
-              <IconShield size={18} color="#0284c7" />
-            </div>
-            <div style={{ fontSize: 24, fontWeight: 850, color: '#0284c7', margin: '4px 0' }}>
-              Aktif (ON)
-            </div>
-            <div style={{ fontSize: 11, color: '#0284c7', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
-              <IconLock size={12} color="#0284c7" />
-              <span>Pencegahan Pidana Tipikor APBDes</span>
+            <div style={{ fontSize: 12, color: '#64748b' }}>
+              {totalItem - tersediaCount > 0 ? `${totalItem - tersediaCount} barang stok sedang kosong` : 'Semua bahan bangunan tersedia'}
             </div>
           </div>
         </div>
@@ -776,7 +778,7 @@ export default function KatalogHargaPage() {
                           alignItems: 'center',
                           gap: 5
                         }}>
-                          {item.stok_tersedia ? '● Tersedia' : '○ Habis'}
+                          <><span style={{ width: 6, height: 6, borderRadius: '50%', background: item.stok_tersedia ? '#16a34a' : '#94a3b8', display: 'inline-block' }} /><span>{item.stok_tersedia ? 'Tersedia' : 'Habis'}</span></>
                         </span>
                       </td>
 
@@ -792,14 +794,10 @@ export default function KatalogHargaPage() {
                             fontWeight: 700,
                             padding: '6px 14px',
                             borderRadius: 6,
-                            cursor: 'pointer',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 5
+                            cursor: 'pointer'
                           }}
                         >
-                          <IconEdit size={12} color="#ffffff" />
-                          <span>Ubah</span>
+                          Ubah
                         </button>
                       </td>
                     </tr>
@@ -1032,8 +1030,8 @@ export default function KatalogHargaPage() {
                       color: '#0f172a'
                     }}
                   >
-                    <option value="tersedia">● Stok Tersedia</option>
-                    <option value="kosong">○ Stok Kosong</option>
+                    <option value="tersedia">Stok Tersedia</option>
+                    <option value="kosong">Stok Kosong</option>
                   </select>
                 </div>
               </div>

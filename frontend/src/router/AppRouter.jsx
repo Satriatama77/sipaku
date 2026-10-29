@@ -1,8 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider } from '../context/AuthContext'
 import { ToastProvider } from '../context/ToastContext'
 import ProtectedRoute, { RouteGuard } from '../components/ProtectedRoute'
 import Navbar from '../components/Navbar'
+import Sidebar from '../components/Sidebar'
 
 // ── Auth ──────────────────────────────────────────────────
 import LoginPage from '../features/auth/LoginPage'
@@ -24,25 +25,32 @@ import VerifikasiPage    from '../features/admin/VerifikasiPage'
 import PetaDisparitasPage from '../features/admin/PetaDisparitasPage'
 import ManajemenTokoPage from '../features/admin/ManajemenTokoPage'
 
-export default function AppRouter() {
+// ── Layout Wrapper ────────────────────────────────────────
+function AppLayout() {
+  const location = useLocation()
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
+
+  if (isAuthPage) {
+    return (
+      <Routes>
+        <Route path="/login"    element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Routes>
+    )
+  }
+
   return (
-    <BrowserRouter>
-      <ToastProvider>
-        <AuthProvider>
-          <Navbar />
+    <div className="sipaku-app-layout">
+      <Sidebar />
+      <div className="sipaku-main-wrapper">
+        <Navbar />
+        <div className="sipaku-content-area">
           <Routes>
             {/* ── Root Mengarah ke Login ───────────────────── */}
             <Route path="/" element={<Navigate to="/login" replace />} />
 
-            {/* ── Otentikasi (Login & Register Warga) ──────── */}
-            <Route path="/login"    element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-
             {/* ── Halaman Warga / Pembeli ──────────────────── */}
-            {/* Katalog publik warga bebas dilihat */}
             <Route path="/pembeli" element={<PembeliDashboard />} />
-
-            {/* Kanal Pengaduan Harga: Khusus Warga (Memblokir Admin & Penjual) */}
             <Route
               path="/pembeli/lapor"
               element={
@@ -51,13 +59,9 @@ export default function AppRouter() {
                 </RouteGuard>
               }
             />
-
-            {/* Riwayat Laporan Pengaduan: Terbuka untuk publik warga */}
             <Route path="/pembeli/riwayat" element={<RiwayatLaporan />} />
 
-
             {/* ── Halaman Penjual (Toko Bangunan) ──────────── */}
-            {/* Hanya Penjual dan Admin PU yang berwenang */}
             <Route
               path="/penjual"
               element={
@@ -77,7 +81,6 @@ export default function AppRouter() {
             <Route path="/penjual/voice" element={<Navigate to="/penjual" replace />} />
 
             {/* ── Halaman Admin PU (Dinas PU) ──────────────── */}
-            {/* Ketat hanya untuk Admin PU (Warga & Penjual diblokir otomatis) */}
             <Route
               path="/admin"
               element={
@@ -122,6 +125,18 @@ export default function AppRouter() {
             {/* ── Fallback Halaman Tidak Ditemukan ─────────── */}
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function AppRouter() {
+  return (
+    <BrowserRouter>
+      <ToastProvider>
+        <AuthProvider>
+          <AppLayout />
         </AuthProvider>
       </ToastProvider>
     </BrowserRouter>

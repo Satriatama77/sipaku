@@ -1,16 +1,24 @@
 import { useEffect, useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { getLaporan } from '../../services/laporanService'
 import StatusBadge from '../../components/StatusBadge'
 import SectionHeader from '../../components/ui/SectionHeader'
 import EmptyState from '../../components/ui/EmptyState'
-import { IconFileText, IconCheck, IconAlertTriangle } from '../../components/Icons'
+import { IconFileText, IconCheck, IconAlertTriangle, IconSearch, IconX, IconCopy } from '../../components/Icons'
+import Pagination from '../../components/ui/Pagination'
 
 const WRAP_STYLE = { padding: '28px 24px', maxWidth: 1160, margin: '0 auto' }
 
 export default function RiwayatLaporan() {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 10
+
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialTiket = searchParams.get('tiket') || searchParams.get('q') || ''
+  const [searchQuery, setSearchQuery] = useState(initialTiket)
+  const [copyFeedback, setCopyFeedback] = useState(null)
 
   useEffect(() => {
     getLaporan()
@@ -18,6 +26,19 @@ export default function RiwayatLaporan() {
       .catch(() => setData([]))
       .finally(() => setLoading(false))
   }, [])
+
+  // Sync jika URL search param berubah
+  useEffect(() => {
+    const t = searchParams.get('tiket') || searchParams.get('q') || ''
+    if (t !== searchQuery) {
+      setSearchQuery(t)
+    }
+  }, [searchParams])
+
+  // Reset ke halaman 1 jika filter pencarian berubah
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery])
 
   // Quick summary stats
   const stats = useMemo(() => {
@@ -27,6 +48,31 @@ export default function RiwayatLaporan() {
     const selesai = data.filter((d) => (d.status || '').toLowerCase().includes('selesai')).length
     return { total, pending, sidak, selesai }
   }, [data])
+
+  // Filter data berdasarkan Kode Tiket / Nama Material / Nama Toko / Kecamatan
+  const filteredData = useMemo(() => {
+    if (!searchQuery.trim()) return data
+    const q = searchQuery.toLowerCase().trim()
+    return data.filter((d) => {
+      const tiket = (d.kode_tiket || `spk-2026-${String(d.id_laporan).padStart(4, '0')}`).toLowerCase()
+      const mat = (d.nama_material || '').toLowerCase()
+      const toko = (d.nama_toko || '').toLowerCase()
+      const kec = (d.nama_kecamatan || '').toLowerCase()
+      const pelapor = (d.nama_pelapor || '').toLowerCase()
+      return tiket.includes(q) || mat.includes(q) || toko.includes(q) || kec.includes(q) || pelapor.includes(q)
+    })
+  }, [data, searchQuery])
+
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * pageSize
+    return filteredData.slice(start, start + pageSize)
+  }, [filteredData, currentPage, pageSize])
+
+  const handleCopyTiket = (kode) => {
+    navigator.clipboard.writeText(kode)
+    setCopyFeedback(kode)
+    setTimeout(() => setCopyFeedback(null), 2000)
+  }
 
   return (
     <div className="sipaku-page" style={{ background: '#f8fafc', minHeight: '100vh', color: '#0f172a', paddingBottom: 60, fontFamily: 'var(--sans)' }}>
@@ -57,7 +103,7 @@ export default function RiwayatLaporan() {
                 transition: 'all 0.15s ease',
               }}
             >
-              <span>+</span> Buat Pengaduan Baru
+              Buat Pengaduan Baru
             </Link>
           }
         />
@@ -91,6 +137,111 @@ export default function RiwayatLaporan() {
             </div>
           </div>
         )}
+
+        {/* ── BILAH PENCARIAN & PELACAKAN KODE TIKET ADUAN ── */}
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: 14,
+            border: '1px solid #e2e8f0',
+            padding: '16px 20px',
+            marginBottom: 20,
+            boxShadow: '0 2px 6px -1px rgba(15,23,42,0.04)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+            <div>
+              <span style={{ fontSize: 13, fontWeight: 750, color: '#0f172a' }}>Lacak Pengaduan Warga</span>
+              <span style={{ fontSize: 12, color: '#64748b', marginLeft: 8 }}>
+                Masukkan Kode Tiket (misal: <strong style={{ color: '#0284c7' }}>SPK-2026-0001</strong>) untuk mengecek laporan Anda
+              </span>
+            </div>
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('')
+                  setSearchParams({})
+                }}
+                style={{
+                  background: '#f1f5f9',
+                  border: '1px solid #cbd5e1',
+                  color: '#475569',
+                  fontSize: 11.5,
+                  fontWeight: 650,
+                  padding: '4px 10px',
+                  borderRadius: 6,
+                  cursor: 'pointer'
+                }}
+              >
+                Tampilkan Semua Laporan
+              </button>
+            )}
+          </div>
+
+          <div style={{ position: 'relative', width: '100%' }}>
+            <div style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#94a3b8' }}>
+              <IconSearch size={16} />
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                const val = e.target.value
+                setSearchQuery(val)
+                if (val.trim()) {
+                  setSearchParams({ tiket: val.trim() })
+                } else {
+                  setSearchParams({})
+                }
+              }}
+              placeholder="Ketik Kode Tiket (SPK-2026-XXXX), nama toko, material, atau kecamatan..."
+              style={{
+                width: '100%',
+                boxSizing: 'border-box',
+                padding: '11px 40px 11px 38px',
+                borderRadius: 10,
+                border: searchQuery ? '1.5px solid #0284c7' : '1px solid #cbd5e1',
+                fontSize: 13,
+                outline: 'none',
+                background: searchQuery ? '#ffffff' : '#f8fafc',
+                transition: 'all 0.15s ease'
+              }}
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('')
+                  setSearchParams({})
+                }}
+                style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#94a3b8',
+                  padding: 4
+                }}
+                title="Hapus pencarian"
+              >
+                <IconX size={14} />
+              </button>
+            )}
+          </div>
+
+          {searchQuery && (
+            <div style={{ fontSize: 12, color: '#0284c7', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span>Ditemukan <strong>{filteredData.length}</strong> pengaduan untuk kata kunci "{searchQuery}"</span>
+            </div>
+          )}
+        </div>
 
         {/* Table Container */}
         <div
@@ -130,13 +281,42 @@ export default function RiwayatLaporan() {
                   Mulai Buat Laporan
                 </Link>
               }
-
             />
+          ) : filteredData.length === 0 ? (
+            <div style={{ padding: '48px 24px', textAlign: 'center' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 48, height: 48, borderRadius: '50%', background: '#f1f5f9', color: '#64748b', marginBottom: 12 }}><IconSearch size={22} /></div>
+              <h3 style={{ fontSize: 16, fontWeight: 750, color: '#0f172a', margin: '0 0 6px' }}>
+                Pengaduan Tidak Ditemukan
+              </h3>
+              <p style={{ fontSize: 13, color: '#64748b', maxWidth: 440, margin: '0 auto 16px', lineHeight: 1.5 }}>
+                Tidak ada laporan dengan kode tiket atau kata kunci "<strong>{searchQuery}</strong>". Pastikan penulisan kode tiket sesuai (contoh: <code>SPK-2026-0001</code>).
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('')
+                  setSearchParams({})
+                }}
+                style={{
+                  background: '#0f172a',
+                  color: '#ffffff',
+                  border: 'none',
+                  padding: '8px 16px',
+                  borderRadius: 8,
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  cursor: 'pointer'
+                }}
+              >
+                Tampilkan Semua Laporan
+              </button>
+            </div>
           ) : (
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, textAlign: 'left' }}>
                 <thead>
                   <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', color: '#475569' }}>
+                    <th style={{ padding: '14px 18px', fontWeight: 750, fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Kode Tiket</th>
                     <th style={{ padding: '14px 18px', fontWeight: 750, fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Material</th>
                     <th style={{ padding: '14px 18px', fontWeight: 750, fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Toko & Lokasi</th>
                     <th style={{ padding: '14px 18px', fontWeight: 750, fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Harga Temuan</th>
@@ -146,10 +326,12 @@ export default function RiwayatLaporan() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.map((l) => {
+                  {paginatedData.map((l) => {
                     const disp = Number(l.persentase_disparitas || 0)
                     const isHigh = disp > 20
                     const isMid = disp > 5
+                    const kodeTiket = l.kode_tiket || `SPK-2026-${String(l.id_laporan).padStart(4, '0')}`
+                    const isCopied = copyFeedback === kodeTiket
 
                     return (
                       <tr
@@ -161,6 +343,42 @@ export default function RiwayatLaporan() {
                         onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f8fafc' }}
                         onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
                       >
+                        <td style={{ padding: '14px 18px', whiteSpace: 'nowrap' }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                            <span
+                              style={{
+                                fontFamily: 'monospace',
+                                fontWeight: 800,
+                                fontSize: 12,
+                                color: '#0284c7',
+                                background: '#f0f9ff',
+                                padding: '3px 8px',
+                                borderRadius: 6,
+                                border: '1px solid #bae6fd',
+                                letterSpacing: '0.03em'
+                              }}
+                            >
+                              {kodeTiket}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyTiket(kodeTiket)}
+                              title={isCopied ? 'Tersalin!' : 'Salin Kode Tiket'}
+                              style={{
+                                background: isCopied ? '#ecfdf5' : '#f8fafc',
+                                border: `1px solid ${isCopied ? '#a7f3d0' : '#e2e8f0'}`,
+                                color: isCopied ? '#059669' : '#64748b',
+                                cursor: 'pointer',
+                                padding: '2px 6px',
+                                borderRadius: 4,
+                                fontSize: 11,
+                                fontWeight: 650
+                              }}
+                            >
+                              {isCopied ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}><IconCheck size={12} color="#059669" /> Tersalin</span> : <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}><IconCopy size={12} /> Salin</span>}
+                            </button>
+                          </div>
+                        </td>
                         <td style={{ padding: '14px 18px' }}>
                           <div style={{ fontWeight: 800, color: '#0f172a', fontSize: 13.5 }}>
                             {l.nama_material}
@@ -208,6 +426,16 @@ export default function RiwayatLaporan() {
                 </tbody>
               </table>
             </div>
+          )}
+
+          {!loading && filteredData.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalItems={filteredData.length}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              itemLabel="laporan"
+            />
           )}
         </div>
       </div>

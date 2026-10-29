@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { getLaporanAdmin, updateStatusLaporan } from '../../services/adminService'
 import StatusBadge from '../../components/StatusBadge'
 import { useToast } from '../../context/ToastContext'
+import Pagination from '../../components/ui/Pagination'
 
 const STATUS_LIST = ['Pending', 'Tindak Lanjut', 'Selesai']
 
@@ -10,12 +11,17 @@ export default function VerifikasiPage() {
   const [filter, setFilter] = useState('')
   const [loading, setLoading] = useState(true)
   const [fotoModal, setFotoModal] = useState(null) // URL foto yang dibuka di modal
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 10
   const { toast } = useToast()
 
   const fetchData = (status = '') => {
     setLoading(true)
     getLaporanAdmin(status || null)
-      .then((res) => setData(res.data.data))
+      .then((res) => {
+        setData(res.data.data)
+        setCurrentPage(1)
+      })
       .catch(() => setData([]))
       .finally(() => setLoading(false))
   }
@@ -39,81 +45,139 @@ export default function VerifikasiPage() {
     selesai: data.filter(l => l.status === 'Selesai').length,
   }
 
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * pageSize
+    return data.slice(start, start + pageSize)
+  }, [data, currentPage, pageSize])
+
+  const handleExportCSV = () => {
+    if (!data.length) return
+    const headers = ['Kode Tiket', 'ID Laporan', 'Tanggal', 'Nama Material', 'Toko', 'Kecamatan', 'Nama Pelapor', 'Harga Temuan', 'Standar SSH', 'Disparitas (%)', 'Status']
+    const rows = data.map(l => [
+      `"${(l.kode_tiket || `SPK-2026-${String(l.id_laporan).padStart(4, '0')}`).replace(/"/g, '""')}"`,
+      l.id_laporan,
+      `"${(l.tanggal_laporan || '').replace(/"/g, '""')}"`,
+      `"${(l.nama_material || '').replace(/"/g, '""')}"`,
+      `"${(l.nama_toko || '').replace(/"/g, '""')}"`,
+      `"${(l.nama_kecamatan || '').replace(/"/g, '""')}"`,
+      `"${(l.nama_pelapor || 'Warga Anonim').replace(/"/g, '""')}"`,
+      l.harga_temuan,
+      l.harga_ssh || 0,
+      l.persentase_disparitas ? Number(l.persentase_disparitas).toFixed(1) : '0.0',
+      `"${(l.status || '').replace(/"/g, '""')}"`
+    ])
+    const csvString = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n')
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `rekap_laporan_disparitas_${new Date().toISOString().slice(0, 10)}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    toast.success('File CSV laporan berhasil diunduh.', 'Ekspor Selesai')
+  }
+
+  const handlePrint = () => {
+    window.print()
+  }
+
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh', color: '#1e293b', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif" }}>
 
-      <div className="dash-container" style={{ maxWidth: 1200 }}>
+      <div className="dash-container" style={{ maxWidth: 1280 }}>
         {/* Hero Banner */}
-        <section className="hero-banner-box">
+        <section className="hero-banner-box" style={{ marginBottom: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 14, marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
               <span style={{
-                background: '#ea580c',
-                color: '#ffffff',
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: '#f8fafc',
                 fontSize: 11,
-                fontWeight: 800,
+                fontWeight: 750,
                 padding: '4px 10px',
-                borderRadius: 4,
+                borderRadius: 6,
+                border: '1px solid rgba(255, 255, 255, 0.15)',
                 letterSpacing: '0.04em'
               }}>
                 SIPAKU VERIFIKASI
               </span>
               <span style={{
                 background: 'rgba(16, 185, 129, 0.15)',
-                color: '#34d399',
+                color: '#6ee7b7',
                 fontSize: 11,
-                fontWeight: 700,
-                padding: '3px 9px',
+                fontWeight: 650,
+                padding: '3px 10px',
                 borderRadius: 20,
                 border: '1px solid rgba(16, 185, 129, 0.3)',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 5
               }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399' }} />
-                Live Data
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399', boxShadow: '0 0 8px rgba(52, 211, 153, 0.8)' }} />
+                Data Terverifikasi
               </span>
             </div>
+
+            <button
+              onClick={() => fetchData(filter)}
+              style={{
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: '#ffffff',
+                padding: '7px 14px',
+                borderRadius: 8,
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: 'pointer',
+                backdropFilter: 'blur(4px)',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              Segarkan Data
+            </button>
           </div>
 
           <div style={{ maxWidth: 880, marginBottom: 20 }}>
             <h1 style={{
-              fontSize: 'clamp(20px, 4vw, 26px)',
+              fontSize: 'clamp(20px, 3.5vw, 24px)',
               fontWeight: 800,
               color: '#ffffff',
-              margin: '0 0 8px',
+              margin: '0 0 6px',
               letterSpacing: '-0.02em',
               lineHeight: 1.25
             }}>
-              Verifikasi & Validasi Laporan Harga Material
+              Verifikasi &amp; Validasi Laporan Harga Material
             </h1>
             <p style={{
-              fontSize: 'clamp(12px, 2.5vw, 13px)',
-              color: '#94a3b8',
+              fontSize: 13,
+              color: '#cbd5e1',
               margin: 0,
               lineHeight: 1.55
             }}>
-              Dinas Pekerjaan Umum Bina Marga & Cipta Karya Kabupaten Lamongan — Verifikasi laporan disparitas harga material bangunan dari warga dan pedagang.
+              Dinas Pekerjaan Umum Bina Marga &amp; Cipta Karya Kabupaten Lamongan — Verifikasi laporan disparitas harga material bangunan dari warga dan pedagang.
             </p>
           </div>
 
-          {/* Quick Stats in Banner */}
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 8 }}>
+          {/* Quick Stats Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
             {[
-              { label: 'Total Laporan', value: counts.total, color: '#38bdf8' },
-              { label: 'Menunggu Audit', value: counts.pending, color: '#f59e0b' },
-              { label: 'Tindak Lanjut', value: counts.tindak, color: '#ea580c' },
-              { label: 'Selesai', value: counts.selesai, color: '#34d399' },
+              { label: 'Total Laporan', value: counts.total, color: '#38bdf8', desc: '100% Aduan Masuk' },
+              { label: 'Menunggu Audit', value: counts.pending, color: '#fbbf24', desc: 'Perlu Ditinjau' },
+              { label: 'Tindak Lanjut', value: counts.tindak, color: '#fb923c', desc: 'Proses Tim Sidak' },
+              { label: 'Selesai', value: counts.selesai, color: '#34d399', desc: 'Tervalidasi / Tuntas' },
             ].map((s) => (
               <div key={s.label} style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: 8,
-                padding: '8px 16px',
-                minWidth: 100
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: 12,
+                padding: '12px 16px',
+                backdropFilter: 'blur(4px)'
               }}>
-                <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600, marginBottom: 2 }}>{s.label}</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</div>
+                <div style={{ fontSize: 11, color: '#cbd5e1', fontWeight: 600, marginBottom: 2 }}>{s.label}</div>
+                <div style={{ fontSize: 24, fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</div>
+                <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{s.desc}</div>
               </div>
             ))}
           </div>
@@ -168,7 +232,9 @@ export default function VerifikasiPage() {
             borderBottom: '1px solid #f1f5f9',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 12
           }}>
             <div style={{ borderLeft: '3px solid #0f172a', paddingLeft: 10 }}>
               <h2 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: '0 0 2px' }}>
@@ -178,16 +244,54 @@ export default function VerifikasiPage() {
                 Data laporan warga terkait selisih harga material di toko bangunan
               </p>
             </div>
-            <span style={{
-              background: '#f1f5f9',
-              color: '#475569',
-              fontSize: 11,
-              fontWeight: 700,
-              padding: '4px 12px',
-              borderRadius: 20
-            }}>
-              {data.length} Laporan
-            </span>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={handleExportCSV}
+                disabled={data.length === 0}
+                style={{
+                  background: '#f8fafc',
+                  border: '1px solid #cbd5e1',
+                  color: '#334155',
+                  padding: '6px 14px',
+                  borderRadius: 6,
+                  fontSize: 12,
+                  fontWeight: 650,
+                  cursor: data.length === 0 ? 'not-allowed' : 'pointer'
+                }}
+              >
+                Ekspor CSV
+              </button>
+
+              <button
+                type="button"
+                onClick={handlePrint}
+                style={{
+                  background: '#f8fafc',
+                  border: '1px solid #cbd5e1',
+                  color: '#334155',
+                  padding: '6px 14px',
+                  borderRadius: 6,
+                  fontSize: 12,
+                  fontWeight: 650,
+                  cursor: 'pointer'
+                }}
+              >
+                Cetak Dokumen
+              </button>
+
+              <span style={{
+                background: '#f1f5f9',
+                color: '#475569',
+                fontSize: 11,
+                fontWeight: 700,
+                padding: '5px 12px',
+                borderRadius: 20
+              }}>
+                {data.length} Laporan
+              </span>
+            </div>
           </div>
 
           {loading ? (
@@ -197,7 +301,7 @@ export default function VerifikasiPage() {
               <table style={{ width: '100%', minWidth: 780, borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
                   <tr style={{ background: '#f8fafc' }}>
-                    {['#', 'Material', 'Toko', 'Kecamatan', 'Harga Temuan', 'Disparitas', 'Bukti Foto', 'Status', 'Aksi'].map((h) => (
+                    {['Kode Tiket', 'Material', 'Toko', 'Kecamatan', 'Harga Temuan', 'Disparitas', 'Bukti Foto', 'Status', 'Aksi'].map((h) => (
                       <th key={h} style={{
                         padding: '12px 16px',
                         textAlign: 'left',
@@ -218,21 +322,32 @@ export default function VerifikasiPage() {
                       </td>
                     </tr>
                   )}
-                  {data.map((l, idx) => (
+                  {paginatedData.map((l, idx) => (
                     <tr key={l.id_laporan} style={{
                       borderBottom: '1px solid #f1f5f9',
                       background: idx % 2 === 0 ? '#ffffff' : '#fafbfc'
                     }}>
-                      <td style={{ padding: '12px 16px', color: '#94a3b8', fontWeight: 600, fontSize: 12 }}>
-                        {l.id_laporan}
+                      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
+                        <span style={{
+                          fontFamily: 'monospace',
+                          fontWeight: 800,
+                          fontSize: 11.5,
+                          color: '#0284c7',
+                          background: '#f0f9ff',
+                          padding: '2px 7px',
+                          borderRadius: 4,
+                          border: '1px solid #bae6fd'
+                        }}>
+                          {l.kode_tiket || `SPK-2026-${String(l.id_laporan).padStart(4, '0')}`}
+                        </span>
                       </td>
                       <td style={{ padding: '12px 16px', fontWeight: 700, color: '#0f172a' }}>
                         {l.nama_material}
                       </td>
                       <td style={{ padding: '12px 16px', color: '#475569' }}>
                         <div style={{ fontWeight: 600, color: '#334155' }}>{l.nama_toko}</div>
-                        <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <span>👤</span> {l.nama_pelapor || 'Warga Anonim'}
+                        <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
+                          Pelapor: {l.nama_pelapor || 'Warga Anonim'}
                         </div>
                       </td>
                       <td style={{ padding: '12px 16px' }}>
@@ -307,12 +422,9 @@ export default function VerifikasiPage() {
                             background: '#f8fafc',
                             border: '1px dashed #cbd5e1',
                             padding: '3px 8px',
-                            borderRadius: 4,
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 4
+                            borderRadius: 4
                           }}>
-                            <span style={{ fontSize: 12 }}>📷</span> Tanpa Bukti
+                            Tanpa Bukti
                           </span>
                         )}
                       </td>
@@ -337,6 +449,16 @@ export default function VerifikasiPage() {
                 </tbody>
               </table>
             </div>
+          )}
+
+          {!loading && data.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalItems={data.length}
+              pageSize={pageSize}
+              onPageChange={setCurrentPage}
+              itemLabel="laporan"
+            />
           )}
         </section>
 
@@ -393,7 +515,7 @@ export default function VerifikasiPage() {
                     cursor: 'pointer'
                   }}
                 >
-                  ✕ Tutup
+                  Tutup
                 </button>
               </div>
               <img

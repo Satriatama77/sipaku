@@ -1,6 +1,11 @@
 import api from './api'
 
-export const getLaporan    = (status = null) => api.get('/api/laporan', { params: status ? { status } : {} })
+export const getLaporan = (status = null, cari = null) => {
+  const params = {}
+  if (status) params.status = status
+  if (cari) params.cari = cari
+  return api.get('/api/laporan', { params })
+}
 export const getLaporanById = (id) => api.get(`/api/laporan/${id}`)
 
 /**

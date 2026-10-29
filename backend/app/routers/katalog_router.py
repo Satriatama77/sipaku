@@ -42,3 +42,23 @@ def update_katalog(
 
     hasil = katalog_service.perbarui_harga(conn, id_toko, katalog)
     return {"status": "sukses", "data": hasil}
+
+@router.put("/{id_toko}/batch")
+def update_katalog_batch(
+    id_toko: int,
+    items: list[KatalogUpdate],
+    current_user: AuthenticatedUser = Depends(require_penjual_or_admin),
+    conn=Depends(get_db)
+):
+    """Update atau tambah banyak item harga sekaligus di katalog toko (Multi-Item NLP Input)."""
+    if current_user.role == "penjual" and current_user.id_toko and current_user.id_toko != id_toko:
+        raise HTTPException(
+            status_code=403,
+            detail=f"Akses Ditolak (403): Akun Anda terdaftar untuk Toko #{current_user.id_toko}, tidak diizinkan mengubah Toko #{id_toko}."
+        )
+
+    if not items:
+        raise HTTPException(status_code=400, detail="Daftar item tidak boleh kosong")
+
+    hasil = katalog_service.perbarui_harga_batch(conn, id_toko, items)
+    return {"status": "sukses", "data": hasil}

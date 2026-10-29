@@ -13,6 +13,7 @@ class LaporanCreate(BaseModel):
 
 class LaporanResponse(BaseModel):
     id_laporan: int
+    kode_tiket: Optional[str] = None
     id_kecamatan: int
     nama_kecamatan: str
     nama_toko: str

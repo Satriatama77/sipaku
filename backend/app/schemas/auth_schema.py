@@ -19,3 +19,7 @@ class LoginResponse(BaseModel):
     role: Optional[str] = None
     nama_lengkap: Optional[str] = None
     id_toko: Optional[int] = None
+
+class GantiPasswordRequest(BaseModel):
+    password_lama: str
+    password_baru: str

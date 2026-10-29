@@ -12,9 +12,9 @@ router = APIRouter(prefix="/api/laporan", tags=["Laporan Harga"])
 
 @router.get("", include_in_schema=False)
 @router.get("/")
-def get_semua_laporan(status: str = None, conn=Depends(get_db)):
-    """Ambil semua laporan. Query param ?status=Pending|Tindak Lanjut|Selesai"""
-    data = laporan_service.ambil_semua_laporan(conn, status)
+def get_semua_laporan(status: str = None, cari: str = None, conn=Depends(get_db)):
+    """Ambil semua laporan. Query param ?status=Pending|Tindak Lanjut|Selesai & ?cari=kode_tiket/kata_kunci"""
+    data = laporan_service.ambil_semua_laporan(conn, status, cari)
     return {"status": "sukses", "total": len(data), "data": data}
 
 from app.dependencies import require_warga, AuthenticatedUser

@@ -87,69 +87,43 @@ export default function RegisterPage() {
       position: 'relative',
       fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif"
     }}>
-      {/* Decorative Radar/Concentric Rings Accent (Subtle Background) */}
-      <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 720,
-        height: 720,
-        borderRadius: '50%',
-        border: '1px dashed rgba(148, 163, 184, 0.25)',
-        pointerEvents: 'none',
-        zIndex: 0
-      }} />
-      <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 960,
-        height: 960,
-        borderRadius: '50%',
-        border: '1px solid rgba(148, 163, 184, 0.12)',
-        pointerEvents: 'none',
-        zIndex: 0
-      }} />
-
       {/* Main Card Container */}
       <div style={{
         position: 'relative',
         zIndex: 1,
         width: '100%',
-        maxWidth: 480,
+        maxWidth: 460,
         background: '#ffffff',
-        borderRadius: 16,
-        boxShadow: '0 20px 45px -12px rgba(15, 23, 42, 0.12), 0 4px 16px -2px rgba(15, 23, 42, 0.04)',
+        borderRadius: 14,
+        boxShadow: '0 4px 20px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04)',
         border: '1px solid #e2e8f0',
         overflow: 'hidden'
       }}>
-        {/* Top Dark Navy Header Strip */}
+        {/* Top Header Accent Strip */}
         <div style={{
-          height: 6,
-          background: 'linear-gradient(90deg, #0f172a 0%, #1e293b 50%, #0369a1 100%)'
+          height: 4,
+          background: '#0f172a'
         }} />
 
         <div style={{ padding: '32px 32px 28px' }}>
           {/* Header Branding */}
           <div style={{ textAlign: 'center', marginBottom: 20 }}>
             {/* Top Logo & Dinas PU Badge */}
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
               <img
                 src="/logo.jpg"
                 alt="Logo SIPAKU"
                 style={{
-                  width: 44,
-                  height: 44,
+                  width: 42,
+                  height: 42,
                   objectFit: 'contain',
-                  borderRadius: 10,
+                  borderRadius: 8,
                   background: '#ffffff',
                   border: '1px solid #e2e8f0',
-                  boxShadow: '0 2px 6px rgba(15, 23, 42, 0.08)'
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)'
                 }}
               />
-              <div style={{ textAlign: 'left', lineHeight: 1.1 }}>
+              <div style={{ textAlign: 'left', lineHeight: 1.15 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span style={{ fontSize: 18, fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
                     SIPAKU
@@ -170,24 +144,6 @@ export default function RegisterPage() {
                   KABUPATEN LAMONGAN
                 </div>
               </div>
-            </div>
-
-            {/* Pill Banner Kedinasan (Clean tanpa emoji) */}
-            <div>
-              <span style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                background: '#f8fafc',
-                border: '1px solid #e2e8f0',
-                color: '#475569',
-                fontSize: 10,
-                fontWeight: 700,
-                padding: '4px 12px',
-                borderRadius: 9999,
-                letterSpacing: '0.04em'
-              }}>
-                PEMERINTAH KABUPATEN LAMONGAN • DINAS PU BM & CK
-              </span>
             </div>
 
             {/* Title & Subtitle */}
@@ -284,8 +240,7 @@ export default function RegisterPage() {
               onMouseEnter={(e) => { if (!loading && !isSubmitting && !sukses) e.currentTarget.style.background = '#1e293b' }}
               onMouseLeave={(e) => { if (!loading && !isSubmitting && !sukses) e.currentTarget.style.background = '#0f172a' }}
             >
-              <span>{loading || isSubmitting ? 'Memproses Pendaftaran...' : 'Daftar Sekarang'}</span>
-              <span style={{ fontSize: 15 }}>→</span>
+              {loading || isSubmitting ? 'Memproses Pendaftaran...' : 'Daftar Sekarang'}
             </button>
           </form>
 

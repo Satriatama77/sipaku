@@ -11,5 +11,6 @@ export const tambahToko         = (data) => api.post('/api/admin/toko', data)
 export const getDaftarKecamatan = () => api.get('/api/admin/kecamatan')
 export const getKatalogToko     = (idToko) => api.get(`/api/katalog/${idToko}`)
 export const updateKatalogToko   = (idToko, data) => api.put(`/api/katalog/${idToko}`, data)
+export const updateBatchKatalogToko = (idToko, items) => api.put(`/api/katalog/${idToko}/batch`, items)
 
 

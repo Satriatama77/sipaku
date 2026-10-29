@@ -15,6 +15,9 @@ def buat_laporan(conn, laporan: LaporanCreate, id_pelapor: int) -> dict:
 
     hasil = hitung_disparitas(laporan.nama_material, nama_kecamatan, laporan.harga_temuan)
 
+    now = datetime.now()
+    year = now.year
+
     query = """
         INSERT INTO laporan_harga
             (id_pelapor, id_kecamatan, nama_toko, nama_material,
@@ -25,25 +28,37 @@ def buat_laporan(conn, laporan: LaporanCreate, id_pelapor: int) -> dict:
         id_pelapor, laporan.id_kecamatan, laporan.nama_toko,
         laporan.nama_material, laporan.harga_temuan,
         hasil.harga_ssh, hasil.persentase,
-        laporan.foto_url, laporan.nama_pelapor or "Warga Anonim", datetime.now(),
+        laporan.foto_url, laporan.nama_pelapor or "Warga Anonim", now,
     ))
-    conn.commit()
     id_baru = cursor.lastrowid
+    kode_tiket = f"SPK-{year}-{id_baru:04d}"
+    cursor.execute("UPDATE laporan_harga SET kode_tiket = %s WHERE id_laporan = %s", (kode_tiket, id_baru))
+    conn.commit()
     cursor.close()
-    return {"id_laporan": id_baru, "disparitas": hasil.model_dump()}
+    return {"id_laporan": id_baru, "kode_tiket": kode_tiket, "disparitas": hasil.model_dump()}
 
-def ambil_semua_laporan(conn, status: str = None) -> list[dict]:
-    """Ambil semua laporan. Filter by status jika diberikan."""
+def ambil_semua_laporan(conn, status: str = None, cari: str = None) -> list[dict]:
+    """Ambil semua laporan. Filter by status atau kata kunci/kode_tiket jika diberikan."""
     cursor = get_cursor(conn)
+    query = "SELECT l.*, k.nama_kecamatan FROM laporan_harga l JOIN kecamatan k ON l.id_kecamatan = k.id_kecamatan"
+    conditions = []
+    params = []
+
     if status:
-        cursor.execute(
-            "SELECT l.*, k.nama_kecamatan FROM laporan_harga l JOIN kecamatan k ON l.id_kecamatan = k.id_kecamatan WHERE l.status = %s ORDER BY l.tanggal_laporan DESC",
-            (status,)
-        )
-    else:
-        cursor.execute(
-            "SELECT l.*, k.nama_kecamatan FROM laporan_harga l JOIN kecamatan k ON l.id_kecamatan = k.id_kecamatan ORDER BY l.tanggal_laporan DESC"
-        )
+        conditions.append("l.status = %s")
+        params.append(status)
+
+    if cari:
+        conditions.append("(l.kode_tiket LIKE %s OR l.nama_material LIKE %s OR l.nama_toko LIKE %s OR k.nama_kecamatan LIKE %s)")
+        like_val = f"%{cari.strip()}%"
+        params.extend([like_val, like_val, like_val, like_val])
+
+    if conditions:
+        query += " WHERE " + " AND ".join(conditions)
+
+    query += " ORDER BY l.tanggal_laporan DESC"
+
+    cursor.execute(query, tuple(params))
     data = cursor.fetchall()
     cursor.close()
     return data

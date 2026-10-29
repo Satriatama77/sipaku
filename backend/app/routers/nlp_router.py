@@ -31,6 +31,8 @@ def parse_text(body: TeksInput):
         "status": "sukses",
         "transkrip": body.teks.strip(),
         "hasil_parse": hasil,
+        "items": hasil.get("items", []),
+        "total_terdeteksi": hasil.get("total_terdeteksi", len(hasil.get("items", []))),
     }
 
 
@@ -53,4 +55,6 @@ async def voice_to_text(audio: UploadFile = File(...)):
         "status": "sukses",
         "transkrip": transkrip,
         "hasil_parse": hasil_parse,
+        "items": hasil_parse.get("items", []),
+        "total_terdeteksi": hasil_parse.get("total_terdeteksi", len(hasil_parse.get("items", []))),
     }

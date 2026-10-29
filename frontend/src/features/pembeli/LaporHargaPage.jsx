@@ -235,8 +235,8 @@ export default function LaporHargaPage() {
         nama_pelapor: namaPelapor.trim() || 'Warga Anonim',
       }
 
-      await submitLaporan(payload, fotoBukti)
-      const ticketNumber = `TKT-${new Date().getFullYear()}-SPK${Math.floor(1000 + Math.random() * 9000)}`
+      const res = await submitLaporan(payload, fotoBukti)
+      const ticketNumber = res.data?.data?.kode_tiket || `SPK-${new Date().getFullYear()}-0001`
       setTiketLaporan(ticketNumber)
       setSukses(true)
       toast.success(
@@ -250,6 +250,17 @@ export default function LaporHargaPage() {
     }
   }
 
+  // State salin kode tiket
+  const [copied, setCopied] = useState(false)
+  const handleCopyTicket = () => {
+    if (tiketLaporan) {
+      navigator.clipboard.writeText(tiketLaporan)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2500)
+      toast.success('Nomor tiket berhasil disalin ke clipboard!', 'Tersalin')
+    }
+  }
+
   // ── TAMPILAN SUKSES SETELAH KIRIM LAPORAN ────────────────────
   if (sukses) {
     return (
@@ -259,7 +270,7 @@ export default function LaporHargaPage() {
           border: '1px solid #e2e8f0',
           borderRadius: 16,
           padding: '36px 32px',
-          maxWidth: 520,
+          maxWidth: 540,
           width: '100%',
           textAlign: 'center',
           boxShadow: '0 4px 16px rgba(15,23,42,0.06)'
@@ -287,30 +298,82 @@ export default function LaporHargaPage() {
 
           <div style={{
             background: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            borderRadius: 10,
-            padding: '14px 16px',
+            border: '1.5px dashed #cbd5e1',
+            borderRadius: 12,
+            padding: '18px 20px',
             marginBottom: 24,
-            textAlign: 'left'
+            textAlign: 'center'
           }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
-              Nomor Registrasi Laporan
+            <div style={{ fontSize: 11, fontWeight: 750, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Nomor Registrasi / Kode Tiket Aduan
             </div>
-            <div style={{ fontSize: 16, fontWeight: 800, color: '#0284c7', marginTop: 2 }}>
+            <div style={{
+              fontSize: 24,
+              fontWeight: 850,
+              fontFamily: 'monospace',
+              color: '#0284c7',
+              letterSpacing: '0.05em',
+              marginTop: 6,
+              marginBottom: 10
+            }}>
               {tiketLaporan}
             </div>
-            <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+            
+            <button
+              type="button"
+              onClick={handleCopyTicket}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                background: copied ? '#ecfdf5' : '#ffffff',
+                color: copied ? '#059669' : '#0f172a',
+                border: `1px solid ${copied ? '#a7f3d0' : '#cbd5e1'}`,
+                borderRadius: 8,
+                padding: '6px 14px',
+                fontSize: 12,
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              {copied ? <IconCheck size={14} color="#059669" /> : null}
+              <span>{copied ? 'Kode Tiket Tersalin!' : 'Salin Kode Tiket'}</span>
+            </button>
+
+            <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
               <IconShield size={13} color="#059669" />
-              <span>Identitas dilindungi protokol keamanan BSSN</span>
+              <span>Simpan kode ini untuk melacak status penanganan aduan di menu Riwayat</span>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link
+              to={`/pembeli/riwayat?tiket=${encodeURIComponent(tiketLaporan)}`}
+              style={{
+                padding: '10px 18px',
+                background: '#0284c7',
+                color: '#ffffff',
+                textDecoration: 'none',
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 700,
+                boxShadow: '0 2px 4px rgba(2,132,199,0.25)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6
+              }}
+            >
+              <span>Lacak Status Aduan Ini</span>
+              <span>&rarr;</span>
+            </Link>
+
             <button
               onClick={() => {
                 setSukses(false)
                 setHargaTemuan('')
                 setTiketLaporan('')
+                setCopied(false)
                 handleRemovePhoto()
               }}
               style={{
@@ -330,16 +393,17 @@ export default function LaporHargaPage() {
             <Link
               to="/pembeli"
               style={{
-                padding: '10px 20px',
-                background: '#0f172a',
-                color: '#ffffff',
+                padding: '10px 18px',
+                background: '#ffffff',
+                color: '#475569',
+                border: '1px solid #cbd5e1',
                 textDecoration: 'none',
                 borderRadius: 8,
                 fontSize: 13,
-                fontWeight: 700
+                fontWeight: 650
               }}
             >
-              Ke Beranda Harga
+              Ke Beranda
             </Link>
           </div>
         </div>
@@ -366,7 +430,6 @@ export default function LaporHargaPage() {
               gap: 6
             }}
           >
-            <span style={{ fontSize: 14 }}>←</span>
             <span>Kembali ke Beranda Komparasi</span>
           </Link>
         </div>
@@ -466,7 +529,7 @@ export default function LaporHargaPage() {
                     setIdKecamatan(val)
                     setNamaToko('')
                     if (touched.idKecamatan) {
-                      setFormErrors((prev) => ({ ...prev, idKecamatan: validateField('idKecamatan', val) }))
+                      setFormErrors((prev) => ({ ...prev, idKecamatan: validateField('idKecamatan', val), namaToko: '' }))
                     }
                   }}
                   onBlur={() => {
@@ -501,68 +564,55 @@ export default function LaporHargaPage() {
                   <span style={{ color: '#ef4444', fontWeight: 800 }}>*</span>
                 </label>
                 
-                {tokoDiKecamatan.length > 0 ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <select
-                      value={namaToko}
-                      onChange={(e) => {
-                        const val = e.target.value
-                        setNamaToko(val)
-                        if (touched.namaToko) {
-                          setFormErrors((prev) => ({ ...prev, namaToko: validateField('namaToko', val) }))
-                        }
-                      }}
-                      onBlur={() => {
-                        setTouched((prev) => ({ ...prev, namaToko: true }))
-                        setFormErrors((prev) => ({ ...prev, namaToko: validateField('namaToko', namaToko) }))
-                      }}
-                      className={`lapor-select ${touched.namaToko && formErrors.namaToko ? 'has-error' : ''}`}
-                    >
-                      <option value="">-- Pilih Toko Terdaftar di Wilayah Terpilih --</option>
+                <select
+                  value={namaToko}
+                  disabled={!idKecamatan}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setNamaToko(val)
+                    if (touched.namaToko) {
+                      setFormErrors((prev) => ({ ...prev, namaToko: validateField('namaToko', val) }))
+                    }
+                  }}
+                  onBlur={() => {
+                    setTouched((prev) => ({ ...prev, namaToko: true }))
+                    setFormErrors((prev) => ({ ...prev, namaToko: validateField('namaToko', namaToko) }))
+                  }}
+                  style={{
+                    background: !idKecamatan ? '#f1f5f9' : '#ffffff',
+                    cursor: !idKecamatan ? 'not-allowed' : 'pointer'
+                  }}
+                  className={`lapor-select ${touched.namaToko && formErrors.namaToko ? 'has-error' : ''}`}
+                >
+                  {!idKecamatan ? (
+                    <option value="">-- Pilih Kecamatan Terlebih Dahulu --</option>
+                  ) : tokoDiKecamatan.length === 0 ? (
+                    <option value="" disabled>-- Belum ada toko terdaftar di kecamatan ini --</option>
+                  ) : (
+                    <>
+                      <option value="">-- Pilih Toko di Kecamatan Ini --</option>
+                      {namaToko && !tokoDiKecamatan.some(t => t.nama_toko === namaToko) && (
+                        <option value={namaToko}>{namaToko}</option>
+                      )}
                       {tokoDiKecamatan.map((t, idx) => (
                         <option key={t.id_toko || idx} value={t.nama_toko}>
                           {t.nama_toko} {t.alamat ? `(${t.alamat})` : ''}
                         </option>
                       ))}
-                    </select>
+                    </>
+                  )}
+                </select>
 
-                    <input
-                      type="text"
-                      value={namaToko}
-                      onChange={(e) => {
-                        const val = e.target.value
-                        setNamaToko(val)
-                        if (touched.namaToko) {
-                          setFormErrors((prev) => ({ ...prev, namaToko: validateField('namaToko', val) }))
-                        }
-                      }}
-                      onBlur={() => {
-                        setTouched((prev) => ({ ...prev, namaToko: true }))
-                        setFormErrors((prev) => ({ ...prev, namaToko: validateField('namaToko', namaToko) }))
-                      }}
-                      placeholder="Atau ketik nama toko di sini jika tidak terdaftar..."
-                      className={`lapor-input ${touched.namaToko && formErrors.namaToko ? 'has-error' : ''}`}
-                    />
+                {/* Petunjuk jika belum pilih kecamatan atau toko kosong */}
+                {!idKecamatan ? (
+                  <div style={{ fontSize: 11.5, color: '#64748b', marginTop: 5 }}>
+                    Pilih wilayah kecamatan di atas terlebih dahulu untuk memuat daftar toko.
                   </div>
-                ) : (
-                  <input
-                    type="text"
-                    value={namaToko}
-                    onChange={(e) => {
-                      const val = e.target.value
-                      setNamaToko(val)
-                      if (touched.namaToko) {
-                        setFormErrors((prev) => ({ ...prev, namaToko: validateField('namaToko', val) }))
-                      }
-                    }}
-                    onBlur={() => {
-                      setTouched((prev) => ({ ...prev, namaToko: true }))
-                      setFormErrors((prev) => ({ ...prev, namaToko: validateField('namaToko', namaToko) }))
-                    }}
-                    placeholder="Contoh: TB. Makmur Jaya Babat"
-                    className={`lapor-input ${touched.namaToko && formErrors.namaToko ? 'has-error' : ''}`}
-                  />
-                )}
+                ) : tokoDiKecamatan.length === 0 ? (
+                  <div style={{ fontSize: 11.5, color: '#d97706', marginTop: 5, fontWeight: 500 }}>
+                    Belum ada mitra toko yang terdaftar di kecamatan ini.
+                  </div>
+                ) : null}
 
                 {/* Pesan Error di Bawah Input */}
                 {touched.namaToko && formErrors.namaToko && (
@@ -807,7 +857,7 @@ export default function LaporHargaPage() {
                       borderTop: '1px solid #e2e8f0'
                     }}>
                       <div style={{ fontSize: 12, color: '#334155', fontWeight: 650, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        📎 {fotoBukti?.name} ({(fotoBukti?.size / 1024).toFixed(0)} KB)
+                        {fotoBukti?.name} ({(fotoBukti?.size / 1024).toFixed(0)} KB)
                       </div>
                       <button
                         type="button"
@@ -875,14 +925,14 @@ export default function LaporHargaPage() {
                   style={{
                     flex: '1 1 200px',
                     padding: '13px 24px',
-                    background: loading ? '#94a3b8' : 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                    background: loading ? '#94a3b8' : '#0f172a',
                     color: '#ffffff',
                     border: 'none',
                     borderRadius: 10,
                     fontSize: 14,
-                    fontWeight: 750,
+                    fontWeight: 700,
                     cursor: loading ? 'not-allowed' : 'pointer',
-                    boxShadow: '0 4px 12px rgba(2,132,199,0.28)',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
                     transition: 'all 0.15s ease',
                     display: 'flex',
                     alignItems: 'center',
@@ -890,8 +940,7 @@ export default function LaporHargaPage() {
                     gap: 8
                   }}
                 >
-                  <IconFileText size={16} color="#ffffff" />
-                  <span>{loading ? 'Mengirimkan Pengaduan...' : 'Kirim Laporan Pengaduan'}</span>
+                  {loading ? 'Mengirimkan Pengaduan...' : 'Kirim Laporan Pengaduan'}
                 </button>
 
                 <button

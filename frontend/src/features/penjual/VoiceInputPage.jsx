@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useVoiceRecorder } from '../../hooks/useVoiceRecorder'
 import { parseTeks } from '../../services/voiceService'
+import { IconAlertTriangle, IconSquare, IconMic, IconCheck, IconCheckCircle } from '../../components/Icons'
 
 const WRAP = { padding: '24px 32px', maxWidth: 700, margin: '0 auto' }
 
@@ -69,7 +70,7 @@ export default function VoiceInputPage() {
         {/* Peringatan browser tidak support */}
         {!isSupported && (
           <div style={{ marginBottom: 20, padding: '12px 18px', background: '#451a03', border: '1px solid #ea580c', borderRadius: 10, color: '#fdba74', fontSize: 13 }}>
-            ⚠️ <strong>Browser tidak mendukung Speech Recognition.</strong> Gunakan <strong>Google Chrome</strong> atau <strong>Microsoft Edge</strong> untuk fitur suara.
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, verticalAlign: 'middle', marginRight: 4 }}><IconAlertTriangle size={16} color="#ea580c" /></span><strong>Browser tidak mendukung Speech Recognition.</strong> Gunakan <strong>Google Chrome</strong> atau <strong>Microsoft Edge</strong> untuk fitur suara.
           </div>
         )}
 
@@ -94,11 +95,11 @@ export default function VoiceInputPage() {
               opacity: !isSupported ? 0.5 : 1,
             }}
           >
-            {isRecording ? '⏹' : '🎙️'}
+            {isRecording ? <IconSquare size={28} color="#ffffff" /> : <IconMic size={28} color="#ffffff" />}
           </button>
 
           <p style={{ color: isRecording ? '#f87171' : '#64748b', marginTop: 16, fontWeight: isRecording ? 600 : 400 }}>
-            {isRecording ? '🔴 Merekam... Klik untuk selesai & proses' : 'Klik untuk mulai merekam'}
+            {isRecording ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444' }} />Merekam... Klik untuk selesai & proses</span> : 'Klik untuk mulai merekam'}
           </p>
 
           {error && <p style={{ color: '#f87171', marginTop: 8, fontSize: 13 }}>{error}</p>}
@@ -136,13 +137,13 @@ export default function VoiceInputPage() {
                   fontSize: 14,
                 }}
               >
-                {loading ? '⚡ Memproses NLP...' : '⚡ Proses dengan AI'}
+                {loading ? 'Memproses NLP...' : 'Proses dengan AI'}
               </button>
               <button
                 onClick={handleReset}
                 style={{ padding: '8px', background: '#334155', color: '#94a3b8', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 13 }}
               >
-                🔄 Rekam Ulang
+                Rekam Ulang
               </button>
             </div>
           )}
@@ -161,7 +162,7 @@ export default function VoiceInputPage() {
               <p><span style={{ color: '#64748b' }}>Satuan:</span> <strong>{hasilParse.satuan}</strong></p>
               <p><span style={{ color: '#64748b' }}>Keyakinan:</span>{' '}
                 <strong style={{ color: hasilParse.confidence === 'high' ? '#34d399' : '#f59e0b' }}>
-                  {hasilParse.confidence === 'high' ? '✓ Tinggi' : '⚠ Perlu Verifikasi'}
+                  {hasilParse.confidence === 'high' ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><IconCheck size={14} /> Tinggi</span> : <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}><IconAlertTriangle size={14} /> Perlu Verifikasi</span>}
                 </strong>
               </p>
 
@@ -171,14 +172,14 @@ export default function VoiceInputPage() {
                     onClick={() => setSukses(true)}
                     style={{ flex: 1, padding: '8px 24px', background: '#16a34a', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}
                   >
-                    ✓ Simpan ke Katalog
+                    Simpan ke Katalog
                   </button>
                 )}
                 <button
                   onClick={handleReset}
                   style={{ padding: '8px 16px', background: '#334155', color: '#94a3b8', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 13 }}
                 >
-                  🔄 Ulang
+                  Ulang
                 </button>
               </div>
             </div>
@@ -186,7 +187,7 @@ export default function VoiceInputPage() {
 
           {sukses && (
             <div style={{ marginTop: 16, padding: 12, background: '#052e16', borderRadius: 8, color: '#34d399' }}>
-              ✅ Harga berhasil disimpan ke katalog!
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><IconCheckCircle size={16} color="#34d399" /> Harga berhasil disimpan ke katalog!</span>
             </div>
           )}
         </div>

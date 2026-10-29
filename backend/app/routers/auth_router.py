@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
-from app.schemas.auth_schema import LoginRequest, LoginResponse, RegisterRequest
+from app.schemas.auth_schema import LoginRequest, LoginResponse, RegisterRequest, GantiPasswordRequest
 from app.services.auth_service import authenticate_user, create_access_token, register_user
 from app.database import get_db
+from app.dependencies import get_current_user
 
 router = APIRouter(prefix="/api/auth", tags=["Auth"])
 
@@ -79,3 +80,81 @@ def login(request: LoginRequest, conn=Depends(get_db)):
 def logout():
     # JWT stateless: client cukup hapus token di localStorage
     return {"status": "berhasil", "pesan": "Anda telah logout"}
+
+
+@router.get("/profil")
+def ambil_profil(
+    current_user=Depends(get_current_user),
+    conn=Depends(get_db)
+):
+    """Mengambil rincian profil pengguna aktif untuk modal profil UI."""
+    from app.database import get_cursor
+    cursor = get_cursor(conn)
+    
+    query = """
+        SELECT u.id_user, u.nama_lengkap, u.username, u.role, u.created_at, u.id_toko,
+               t.nama_toko, t.nama_pemilik, t.id_kecamatan, k.nama_kecamatan,
+               t.latitude, t.longitude
+        FROM users u
+        LEFT JOIN toko_bangunan t ON u.id_toko = t.id_toko
+        LEFT JOIN kecamatan k ON t.id_kecamatan = k.id_kecamatan
+        WHERE u.id_user = %s
+    """
+    cursor.execute(query, (current_user.id_user,))
+    data = cursor.fetchone()
+    cursor.close()
+
+    if not data:
+        raise HTTPException(status_code=404, detail="Data pengguna tidak ditemukan")
+
+    return {
+        "status": "sukses",
+        "data": {
+            "id_user": data["id_user"],
+            "nama_lengkap": data["nama_lengkap"],
+            "username": data["username"],
+            "role": data["role"],
+            "created_at": str(data["created_at"]) if data.get("created_at") else None,
+            "id_toko": data.get("id_toko"),
+            "nama_toko": data.get("nama_toko"),
+            "nama_pemilik": data.get("nama_pemilik"),
+            "nama_kecamatan": data.get("nama_kecamatan"),
+            "latitude": float(data["latitude"]) if data.get("latitude") is not None else None,
+            "longitude": float(data["longitude"]) if data.get("longitude") is not None else None,
+        }
+    }
+
+
+@router.post("/ganti-password")
+def ganti_password(
+    body: GantiPasswordRequest,
+    current_user=Depends(get_current_user),
+    conn=Depends(get_db)
+):
+    """Mengubah kata sandi pengguna aktif."""
+    if len(body.password_baru.strip()) < 6:
+        raise HTTPException(status_code=400, detail="Password baru minimal 6 karakter")
+
+    from app.database import get_cursor
+    from app.services.auth_service import verify_password, hash_password
+    cursor = get_cursor(conn)
+
+    cursor.execute("SELECT password FROM users WHERE id_user = %s", (current_user.id_user,))
+    user = cursor.fetchone()
+    if not user:
+        cursor.close()
+        raise HTTPException(status_code=404, detail="Pengguna tidak ditemukan")
+
+    if not verify_password(body.password_lama, user["password"]):
+        cursor.close()
+        raise HTTPException(status_code=400, detail="Kata sandi lama yang Anda masukkan salah")
+
+    new_hash = hash_password(body.password_baru.strip())
+    cursor.execute("UPDATE users SET password = %s WHERE id_user = %s", (new_hash, current_user.id_user))
+    conn.commit()
+    cursor.close()
+
+    return {
+        "status": "sukses",
+        "pesan": "Kata sandi berhasil diperbarui!"
+    }

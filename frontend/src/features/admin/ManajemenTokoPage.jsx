@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'  // used for 'Kembali ke Dasbor' link
 import { getSemuaToko, tambahToko, getDaftarKecamatan } from '../../services/adminService'
+import { IconCheck, IconCopy, IconCheckCircle, IconX } from '../../components/Icons'
 
 export default function ManajemenTokoPage() {
   const [daftarToko, setDaftarToko] = useState([])
@@ -106,59 +107,68 @@ export default function ManajemenTokoPage() {
     <div style={{ background: '#f8fafc', minHeight: '100vh', color: '#1e293b', fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif", paddingBottom: 60 }}>
       <div className="dash-container" style={{ maxWidth: 1280 }}>
         {/* Hero Banner */}
-        <section className="hero-banner-box">
+        <section className="hero-banner-box" style={{ marginBottom: 20 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 14, marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
               <span style={{
-                background: '#ea580c',
-                color: '#ffffff',
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: '#f8fafc',
                 fontSize: 11,
-                fontWeight: 800,
+                fontWeight: 750,
                 padding: '4px 10px',
-                borderRadius: 4,
+                borderRadius: 6,
+                border: '1px solid rgba(255, 255, 255, 0.15)',
                 letterSpacing: '0.04em'
               }}>
                 SIPAKU MANAJEMEN
               </span>
-              <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>
-                • Pengelolaan Data Toko & Akun •
+              <span style={{
+                background: 'rgba(16, 185, 129, 0.15)',
+                color: '#6ee7b7',
+                fontSize: 11,
+                fontWeight: 650,
+                padding: '3px 10px',
+                borderRadius: 20,
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5
+              }}>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399', boxShadow: '0 0 8px rgba(52, 211, 153, 0.8)' }} />
+                Data Toko &amp; Akun
               </span>
             </div>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <Link
                 to="/admin"
                 style={{
-                  background: '#ffffff',
-                  color: '#0f172a',
-                  border: 'none',
-                  borderRadius: 7,
-                  padding: '8px 14px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  color: '#ffffff',
+                  borderRadius: 8,
+                  padding: '7px 14px',
                   fontSize: 12,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   textDecoration: 'none',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.15)'
+                  backdropFilter: 'blur(4px)',
+                  transition: 'all 0.15s ease'
                 }}
               >
-                ← Kembali ke Dasbor
+                Kembali ke Dasbor
               </Link>
               <button
                 onClick={() => { setAkunBaru(null); setErrorMsg(''); setModalTambah(true) }}
                 style={{
-                  background: 'linear-gradient(135deg, #ea580c, #f97316)',
+                  background: '#0284c7',
                   color: '#ffffff',
-                  border: 'none',
-                  borderRadius: 7,
-                  padding: '8px 14px',
+                  border: '1px solid #38bdf8',
+                  borderRadius: 8,
+                  padding: '7px 16px',
                   fontSize: 12,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  boxShadow: '0 2px 4px rgba(234, 88, 12, 0.3)'
+                  boxShadow: '0 2px 8px rgba(2, 132, 199, 0.35)',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 Tambah Toko Baru
@@ -168,42 +178,43 @@ export default function ManajemenTokoPage() {
 
           <div style={{ maxWidth: 880, marginBottom: 20 }}>
             <h1 style={{
-              fontSize: 'clamp(20px, 4vw, 26px)',
+              fontSize: 'clamp(20px, 3.5vw, 24px)',
               fontWeight: 800,
               color: '#ffffff',
-              margin: '0 0 8px',
+              margin: '0 0 6px',
               letterSpacing: '-0.02em',
               lineHeight: 1.25
             }}>
-              Manajemen Toko Bangunan & Akun Penjual
+              Manajemen Toko Bangunan &amp; Akun Penjual
             </h1>
             <p style={{
-              fontSize: 'clamp(12px, 2.5vw, 13px)',
-              color: '#94a3b8',
+              fontSize: 13,
+              color: '#cbd5e1',
               margin: 0,
               lineHeight: 1.55
             }}>
-              Kelola data toko bangunan beserta akun login penjual di seluruh wilayah Kabupaten Lamongan. Setiap toko baru otomatis mendapat akun penjual.
+              Dinas Pekerjaan Umum Bina Marga &amp; Cipta Karya Kabupaten Lamongan — Kelola data toko bangunan beserta akun login penjual di seluruh wilayah Kabupaten Lamongan.
             </p>
           </div>
 
-          {/* Quick Stats */}
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginTop: 8 }}>
+          {/* Quick Stats Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
             {[
-              { label: 'Total Toko', value: daftarToko.length, color: '#38bdf8' },
-              { label: 'Kecamatan', value: daftarKecamatan.length, color: '#34d399' },
-              { label: 'Punya Akun', value: daftarToko.filter(t => t.username).length, color: '#f59e0b' },
-              { label: 'Tanpa Akun', value: daftarToko.filter(t => !t.username).length, color: '#ef4444' },
+              { label: 'Total Toko', value: daftarToko.length, color: '#38bdf8', desc: 'Mitra Terdaftar' },
+              { label: 'Kecamatan', value: daftarKecamatan.length, color: '#34d399', desc: 'Sebaran Wilayah' },
+              { label: 'Punya Akun', value: daftarToko.filter(t => t.username).length, color: '#fbbf24', desc: 'Akses Login Aktif' },
+              { label: 'Tanpa Akun', value: daftarToko.filter(t => !t.username).length, color: '#cbd5e1', desc: 'Belum Ada Akun' },
             ].map((s) => (
               <div key={s.label} style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: 8,
-                padding: '8px 16px',
-                minWidth: 100
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: 12,
+                padding: '12px 16px',
+                backdropFilter: 'blur(4px)'
               }}>
-                <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600, marginBottom: 2 }}>{s.label}</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</div>
+                <div style={{ fontSize: 11, color: '#cbd5e1', fontWeight: 600, marginBottom: 2 }}>{s.label}</div>
+                <div style={{ fontSize: 24, fontWeight: 800, color: s.color, letterSpacing: '-0.02em' }}>{s.value}</div>
+                <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{s.desc}</div>
               </div>
             ))}
           </div>
@@ -219,7 +230,7 @@ export default function ManajemenTokoPage() {
           boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
         }}>
           <div style={{ fontSize: 13, color: '#475569', lineHeight: 1.5 }}>
-            <strong style={{ color: '#0f172a' }}>Informasi Sistem:</strong> Setiap kali Admin menambahkan toko baru di formulir ini, sistem akan <strong>secara otomatis membuatkan akun login penjual</strong> di database dengan username berbasis nama toko dan password default <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: 4, color: '#0f172a', fontWeight: 600 }}>penjual123</code>.
+            <strong style={{ color: '#0f172a' }}>Informasi Sistem:</strong> Setiap kali Admin menambahkan toko baru di formulir ini, sistem akan <strong>secara otomatis membuatkan akun login penjual</strong> di database dengan format username <code style={{ background: '#eff6ff', color: '#0284c7', padding: '2px 6px', borderRadius: 4, fontWeight: 700 }}>penjual&lt;id&gt;</code> (contoh: <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: 4, color: '#0f172a', fontWeight: 700 }}>penjual1</code>, <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: 4, color: '#0f172a', fontWeight: 700 }}>penjual2</code>, dst.) dan password default <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: 4, color: '#0f172a', fontWeight: 700 }}>penjual123</code>.
           </div>
         </section>
 
@@ -416,9 +427,9 @@ export default function ManajemenTokoPage() {
                   </h2>
                   <button
                     onClick={() => setModalTambah(false)}
-                    style={{ background: 'transparent', border: 'none', color: '#94a3b8', fontSize: 20, cursor: 'pointer' }}
+                    style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: 4 }}
                   >
-                    &times;
+                    <IconX size={18} />
                   </button>
                 </div>
 
@@ -506,10 +517,10 @@ export default function ManajemenTokoPage() {
                       type="button"
                       onClick={() => setModalTambah(false)}
                       style={{
-                        padding: '10px 16px',
-                        background: '#f1f5f9',
+                        padding: '10px 18px',
+                        background: '#ffffff',
                         color: '#475569',
-                        border: '1px solid #e2e8f0',
+                        border: '1px solid #cbd5e1',
                         borderRadius: 8,
                         fontSize: 13,
                         fontWeight: 600,
@@ -522,16 +533,16 @@ export default function ManajemenTokoPage() {
                       type="submit"
                       disabled={submitting}
                       style={{
-                        padding: '10px 20px',
-                        background: 'linear-gradient(135deg, #ea580c, #f97316)',
-                        color: '#fff',
+                        padding: '10px 22px',
+                        background: '#0f172a',
+                        color: '#ffffff',
                         border: 'none',
                         borderRadius: 8,
                         fontSize: 13,
                         fontWeight: 700,
                         cursor: 'pointer',
                         opacity: submitting ? 0.7 : 1,
-                        boxShadow: '0 2px 4px rgba(234, 88, 12, 0.3)'
+                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
                       }}
                     >
                       {submitting ? 'Menyimpan...' : 'Simpan Toko & Buat Akun'}
@@ -540,13 +551,26 @@ export default function ManajemenTokoPage() {
                 </form>
               </>
             ) : (
-              /* Success Card with Credentials */
+              /* Success Card with Credentials - Clean & Professional */
               <div>
-                <div style={{ textAlign: 'center', marginBottom: 18 }}>
-                  <h2 style={{ margin: '0 0 6px', color: '#059669', fontSize: 20, fontWeight: 800 }}>
-                    Toko &amp; Akun Penjual Berhasil Dibuat!
+                <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                  <div style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: '50%',
+                    background: '#ecfdf5',
+                    color: '#059669',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 10
+                  }}>
+                    <IconCheckCircle size={24} color="#059669" />
+                  </div>
+                  <h2 style={{ margin: '0 0 6px', color: '#0f172a', fontSize: 18, fontWeight: 800 }}>
+                    Toko &amp; Akun Penjual Berhasil Dibuat
                   </h2>
-                  <p style={{ margin: 0, color: '#64748b', fontSize: 13 }}>
+                  <p style={{ margin: 0, color: '#64748b', fontSize: 13, lineHeight: 1.5 }}>
                     Toko <strong>{akunBaru.nama_toko}</strong> telah tersimpan di sistem. Berikan informasi akun berikut kepada pemilik toko untuk login.
                   </p>
                 </div>
@@ -554,27 +578,45 @@ export default function ManajemenTokoPage() {
                 <div style={{
                   background: '#f8fafc',
                   border: '1px solid #e2e8f0',
-                  borderRadius: 12,
-                  padding: 18,
+                  borderRadius: 10,
+                  padding: '16px 18px',
                   marginBottom: 20
                 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, borderBottom: '1px solid #f1f5f9', paddingBottom: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, borderBottom: '1px solid #f1f5f9', paddingBottom: 8 }}>
                     <span style={{ color: '#64748b', fontSize: 13 }}>Nama Toko:</span>
                     <strong style={{ color: '#0f172a', fontSize: 13 }}>{akunBaru.nama_toko}</strong>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, borderBottom: '1px solid #f1f5f9', paddingBottom: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, borderBottom: '1px solid #f1f5f9', paddingBottom: 8 }}>
                     <span style={{ color: '#64748b', fontSize: 13 }}>Pemilik:</span>
-                    <span style={{ color: '#475569', fontSize: 13 }}>{akunBaru.nama_pemilik}</span>
+                    <span style={{ color: '#334155', fontSize: 13, fontWeight: 500 }}>{akunBaru.nama_pemilik}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, borderBottom: '1px solid #f1f5f9', paddingBottom: 8 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, borderBottom: '1px solid #f1f5f9', paddingBottom: 8 }}>
                     <span style={{ color: '#64748b', fontSize: 13 }}>Username Penjual:</span>
-                    <code style={{ color: '#0284c7', fontSize: 14, fontWeight: 700, background: '#eff6ff', padding: '2px 8px', borderRadius: 4 }}>
+                    <code style={{
+                      fontFamily: 'monospace',
+                      color: '#0f172a',
+                      fontSize: 13.5,
+                      fontWeight: 700,
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      padding: '3px 10px',
+                      borderRadius: 6
+                    }}>
                       {akunBaru.akun_penjual.username}
                     </code>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ color: '#64748b', fontSize: 13 }}>Password Default:</span>
-                    <code style={{ color: '#059669', fontSize: 14, fontWeight: 700, background: '#dcfce7', padding: '2px 8px', borderRadius: 4 }}>
+                    <code style={{
+                      fontFamily: 'monospace',
+                      color: '#0f172a',
+                      fontSize: 13.5,
+                      fontWeight: 700,
+                      background: '#ffffff',
+                      border: '1px solid #cbd5e1',
+                      padding: '3px 10px',
+                      borderRadius: 6
+                    }}>
                       {akunBaru.akun_penjual.password_default}
                     </code>
                   </div>
@@ -585,29 +627,31 @@ export default function ManajemenTokoPage() {
                     onClick={handleCopyCredentials}
                     style={{
                       flex: 1,
-                      padding: '11px',
-                      background: copySuccess ? '#059669' : 'linear-gradient(135deg, #ea580c, #f97316)',
-                      color: '#fff',
+                      padding: '10px 16px',
+                      background: copySuccess ? '#059669' : '#0f172a',
+                      color: '#ffffff',
                       border: 'none',
                       borderRadius: 8,
                       fontSize: 13,
-                      fontWeight: 700,
+                      fontWeight: 650,
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: 6
+                      gap: 6,
+                      transition: 'all 0.15s ease'
                     }}
                   >
+                    {copySuccess ? <IconCheck size={14} color="#ffffff" /> : <IconCopy size={14} color="#ffffff" />}
                     <span>{copySuccess ? 'Berhasil Disalin' : 'Salin Akun Penjual'}</span>
                   </button>
                   <button
                     onClick={() => setModalTambah(false)}
                     style={{
-                      padding: '11px 20px',
-                      background: '#f1f5f9',
+                      padding: '10px 20px',
+                      background: '#ffffff',
                       color: '#475569',
-                      border: '1px solid #e2e8f0',
+                      border: '1px solid #cbd5e1',
                       borderRadius: 8,
                       fontSize: 13,
                       fontWeight: 600,

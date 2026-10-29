@@ -277,7 +277,8 @@ Gunakan salah satu akun berikut untuk login sesuai role di `http://localhost:517
 | **Admin** | Administrator | `admin` | `admin123` | `/admin` |
 | **Admin (Petugas)** | Petugas Survei | `admin1` | `12345` | `/admin` |
 | **Pembeli (Warga)** | Budi Santoso | `pembeli1` | `pembeli123` | `/pembeli` |
-| **Penjual (Toko)** | TB Berkah Abadi | `penjual1` | `penjual123` | `/penjual` |
+| **Penjual (Toko 1)** | TB.Bangun Djaya | `penjual1` | `penjual123` | `/penjual` |
+| **Penjual (Toko 2-8)** | Nama Toko Masing-masing | `penjual2` s/d `penjual8` | `penjual123` | `/penjual` |
 
 ---
 

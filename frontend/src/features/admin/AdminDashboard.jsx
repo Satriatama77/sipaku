@@ -6,6 +6,7 @@ import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 
 import { KOORDINAT_KECAMATAN, PUSAT_KABUPATEN_LAMONGAN } from '../../data/koordinatKecamatan'
+import { IconPlay, IconPause, IconCamera, IconCheck } from '../../components/Icons'
 
 export default function AdminDashboard() {
   const [stat, setStat] = useState(null)
@@ -599,56 +600,55 @@ export default function AdminDashboard() {
         {/* ── 1. HERO BANNER: SIPAKU AUDIT HUB (Dark Navy Card) ── */}
         <section className="hero-banner-box">
           {/* Top Metadata Row & Actions */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 14, marginBottom: 16 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 14, marginBottom: 18 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
               <span style={{
-                background: '#ea580c',
-                color: '#ffffff',
+                background: 'rgba(255, 255, 255, 0.08)',
+                color: '#f8fafc',
                 fontSize: 11,
-                fontWeight: 800,
+                fontWeight: 750,
                 padding: '4px 10px',
-                borderRadius: 4,
+                borderRadius: 6,
+                border: '1px solid rgba(255, 255, 255, 0.15)',
                 letterSpacing: '0.04em'
               }}>
                 SIPAKU AUDIT HUB
               </span>
-              <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>
-                • ID Sesi: PU-LMG-20250518-A7 •
-              </span>
               <span style={{
                 background: 'rgba(16, 185, 129, 0.15)',
-                color: '#34d399',
+                color: '#6ee7b7',
                 fontSize: 11,
-                fontWeight: 700,
-                padding: '3px 9px',
+                fontWeight: 650,
+                padding: '3px 10px',
                 borderRadius: 20,
                 border: '1px solid rgba(16, 185, 129, 0.3)',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 5
               }}>
-                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399' }} />
-                Live Sync Whisper-v3
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399', boxShadow: '0 0 8px rgba(52, 211, 153, 0.8)' }} />
+                Live Sync Terintegrasi
               </span>
             </div>
 
             {/* Action Buttons Top Right */}
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <button
                 onClick={() => setModalType('ekspor')}
                 style={{
-                  background: '#ffffff',
-                  color: '#0f172a',
-                  border: 'none',
-                  borderRadius: 7,
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  color: '#ffffff',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: 8,
                   padding: '8px 14px',
                   fontSize: 12,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 6,
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.15)'
+                  backdropFilter: 'blur(4px)',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 Ekspor Berita Acara
@@ -656,18 +656,18 @@ export default function AdminDashboard() {
               <button
                 onClick={() => setModalType('regulasi')}
                 style={{
-                  background: '#f59e0b',
+                  background: '#0284c7',
                   color: '#ffffff',
-                  border: 'none',
-                  borderRadius: 7,
+                  border: '1px solid #38bdf8',
+                  borderRadius: 8,
                   padding: '8px 14px',
                   fontSize: 12,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 6,
-                  boxShadow: '0 2px 4px rgba(245, 158, 11, 0.3)'
+                  boxShadow: '0 2px 8px rgba(2, 132, 199, 0.35)'
                 }}
               >
                 Regulasi &amp; SK Standar
@@ -676,46 +676,45 @@ export default function AdminDashboard() {
           </div>
 
           {/* Banner Title & Subtitle */}
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, maxWidth: 920, marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, maxWidth: 960, marginBottom: 20 }}>
             <img
               src="/logo.jpg"
               alt="Logo SIPAKU"
               style={{
-                width: 48,
-                height: 48,
+                width: 44,
+                height: 44,
                 objectFit: 'contain',
                 borderRadius: 10,
                 background: '#ffffff',
-                border: '2px solid rgba(255,255,255,0.15)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
                 flexShrink: 0
               }}
             />
             <div>
               <h1 style={{
-                fontSize: 'clamp(20px, 4vw, 26px)',
+                fontSize: 'clamp(20px, 3.5vw, 24px)',
                 fontWeight: 800,
                 color: '#ffffff',
-                margin: '0 0 8px',
-                letterSpacing: '-0.02em',
+                margin: '0 0 6px',
+                letterSpacing: '-0.025em',
                 lineHeight: 1.25
               }}>
                 Pusat Pengawasan &amp; Verifikasi Stabilitas Harga Material
               </h1>
               <p style={{
-                fontSize: 'clamp(12px, 2.5vw, 13px)',
-                color: '#94a3b8',
+                fontSize: 13,
+                color: '#cbd5e1',
                 margin: 0,
                 lineHeight: 1.55
               }}>
-                Dinas Pekerjaan Umum Bina Marga &amp; Cipta Karya Kabupaten Lamongan — Audit silang data input suara pedagang (NLP Speech Recognition) terhadap laporan pembeli lapangan secara real-time.
+                Dinas Pekerjaan Umum Bina Marga &amp; Cipta Karya Kabupaten Lamongan — Audit silang data input pedagang terhadap laporan pembeli lapangan secara real-time.
               </p>
             </div>
           </div>
 
           {/* Search Bar Container */}
           <div className="dash-search-container">
-            
             <input
               type="text"
               value={searchQuery}
@@ -726,7 +725,7 @@ export default function AdminDashboard() {
                 border: 'none',
                 outline: 'none',
                 fontSize: 13,
-                color: '#1e293b',
+                color: '#0f172a',
                 background: 'transparent'
               }}
             />
@@ -741,26 +740,28 @@ export default function AdminDashboard() {
             <button
               onClick={() => showToast(`Memfilter audit dengan kata kunci: "${searchQuery || 'Semua'}"`)}
               style={{
-                background: 'linear-gradient(135deg, #ea580c, #f97316)',
+                background: '#0284c7',
                 color: '#ffffff',
                 border: 'none',
-                borderRadius: 7,
+                borderRadius: 8,
                 padding: '9px 18px',
                 fontSize: 13,
-                fontWeight: 700,
+                fontWeight: 650,
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 6
+                gap: 6,
+                boxShadow: '0 2px 6px rgba(2, 132, 199, 0.3)',
+                transition: 'all 0.15s ease'
               }}
             >
               Cari Audit
             </button>
           </div>
 
-          {/* Quick Filters Row (Touch Scrollable on Small Screens) */}
+          {/* Quick Filters Row */}
           <div className="horizontal-scroll-touch" style={{ marginTop: 14, alignItems: 'center', fontSize: 11 }}>
-            <span style={{ color: '#64748b', fontWeight: 600, flexShrink: 0 }}>Filter Cepat:</span>
+            <span style={{ color: '#94a3b8', fontWeight: 600, flexShrink: 0 }}>Filter Cepat:</span>
             {[
               'Semen Gresik 50kg (3 Kasus)',
               'Kec. Babat',
@@ -773,17 +774,18 @@ export default function AdminDashboard() {
                   key={tag}
                   onClick={() => handleQuickFilter(tag)}
                   style={{
-                    background: active ? '#ea580c' : 'rgba(255,255,255,0.08)',
+                    background: active ? '#0284c7' : 'rgba(255, 255, 255, 0.08)',
                     color: active ? '#ffffff' : '#cbd5e1',
                     border: '1px solid',
-                    borderColor: active ? '#ea580c' : 'rgba(255,255,255,0.15)',
+                    borderColor: active ? '#38bdf8' : 'rgba(255, 255, 255, 0.18)',
                     borderRadius: 20,
-                    padding: '3px 12px',
+                    padding: '4px 12px',
                     fontSize: 11,
                     fontWeight: 600,
                     cursor: 'pointer',
                     whiteSpace: 'nowrap',
-                    flexShrink: 0
+                    flexShrink: 0,
+                    transition: 'all 0.15s ease'
                   }}
                 >
                   {tag}
@@ -793,7 +795,7 @@ export default function AdminDashboard() {
             {activeQuickFilter && (
               <button
                 onClick={() => { setActiveQuickFilter(null); setSearchQuery('') }}
-                style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer', fontSize: 11, textDecoration: 'underline', flexShrink: 0 }}
+                style={{ background: 'none', border: 'none', color: '#fca5a5', cursor: 'pointer', fontSize: 11, textDecoration: 'underline', flexShrink: 0 }}
               >
                 Reset
               </button>
@@ -846,7 +848,7 @@ export default function AdminDashboard() {
                   textDecoration: 'none'
                 }}
               >
-                Kelola Toko &rarr;
+                Kelola Toko
               </Link>
             </div>
           </div>
@@ -1048,10 +1050,15 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* ── DYNAMIC CROSS-CHECK MATRIX CARDS (DATA NLP & LAPORAN WARGA RIIL) ── */}
+            {/* ── DYNAMIC CROSS-CHECK MATRIX CARDS (MODERN, CLEAN & INTUITIVE) ── */}
             {filteredCrossCheck.map((item) => {
               const isPlaying = playingAudioId === item.id_laporan
-              const isClear = item.isKlirStatus || (!item.isAnomali && !item.isModerat)
+              const isResolved = item.statusDb === 'Selesai'
+
+              const accentColor = item.isKlirStatus ? '#10b981' : item.isAnomali ? '#ef4444' : item.isModerat ? '#f59e0b' : '#3b82f6'
+              const badgeBg = item.isKlirStatus ? '#ecfdf5' : item.isAnomali ? '#fef2f2' : item.isModerat ? '#fffbeb' : '#eff6ff'
+              const badgeText = item.isKlirStatus ? '#059669' : item.isAnomali ? '#dc2626' : item.isModerat ? '#d97706' : '#2563eb'
+              const badgeBorder = item.isKlirStatus ? '#a7f3d0' : item.isAnomali ? '#fecaca' : item.isModerat ? '#fde68a' : '#bfdbfe'
 
               return (
                 <div
@@ -1059,21 +1066,22 @@ export default function AdminDashboard() {
                   style={{
                     background: '#ffffff',
                     borderRadius: 12,
-                    border: item.isKlirStatus ? '1px solid #e2e8f0' : item.isAnomali ? '1px solid #fecaca' : item.isModerat ? '1px solid #fed7aa' : '1px solid #e2e8f0',
-                    padding: '16px 18px',
-                    marginBottom: 20,
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.03)'
+                    border: '1px solid #e2e8f0',
+                    borderLeft: `4px solid ${accentColor}`,
+                    padding: '16px 20px',
+                    marginBottom: 16,
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
                   }}
                 >
-                  {/* Card Header */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  {/* Card Header: Material, Store, SKU & Status */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 14 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                       <div style={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: '50%',
-                        background: item.isKlirStatus ? '#dcfce7' : item.isAnomali ? '#fee2e2' : item.isModerat ? '#ffedd5' : '#eff6ff',
-                        color: item.isKlirStatus ? '#15803d' : item.isAnomali ? '#dc2626' : item.isModerat ? '#ea580c' : '#2563eb',
+                        width: 38,
+                        height: 38,
+                        borderRadius: 10,
+                        background: badgeBg,
+                        color: badgeText,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -1084,478 +1092,273 @@ export default function AdminDashboard() {
                         {item.nama_toko.slice(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: 14, fontWeight: 800, color: '#0f172a' }}>{item.nama_toko}</span>
-                          <span style={{ background: '#f1f5f9', color: '#475569', fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 4 }}>
-                            Kec. {item.nama_kecamatan}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: 15, fontWeight: 800, color: '#0f172a' }}>
+                            {item.nama_material}
                           </span>
-                          <span style={{ background: '#eff6ff', color: '#1e40af', fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 4 }}>
+                          <span style={{ background: '#f1f5f9', color: '#475569', fontSize: 10.5, fontWeight: 700, padding: '2px 7px', borderRadius: 4 }}>
                             SKU: {item.sku}
                           </span>
                         </div>
-                        <div style={{ fontSize: 12, color: '#475569', marginTop: 2 }}>
-                          Material Diaudit: <strong>{item.nama_material}</strong>
+                        <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
+                          {item.nama_toko} • <span style={{ color: '#475569', fontWeight: 600 }}>Kec. {item.nama_kecamatan}</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Status Badge */}
-                    <div>
-                      <span style={{
-                        background: item.isKlirStatus ? '#dcfce7' : item.isAnomali ? '#fee2e2' : item.isModerat ? '#ffedd5' : '#eff6ff',
-                        color: item.isKlirStatus ? '#15803d' : item.isAnomali ? '#b91c1c' : item.isModerat ? '#c2410c' : '#1d4ed8',
-                        fontSize: 10,
-                        fontWeight: 800,
-                        padding: '4px 9px',
-                        borderRadius: 4,
-                        letterSpacing: '0.03em',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 4
-                      }}>
-                        <span style={{
-                          width: 6,
-                          height: 6,
-                          borderRadius: '50%',
-                          background: item.isKlirStatus ? '#15803d' : item.isAnomali ? '#b91c1c' : item.isModerat ? '#c2410c' : '#1d4ed8'
-                        }} />
-                        {item.statusBadge}
-                      </span>
+                    {/* Status Chip */}
+                    <div style={{
+                      background: badgeBg,
+                      color: badgeText,
+                      border: `1px solid ${badgeBorder}`,
+                      fontSize: 11,
+                      fontWeight: 700,
+                      padding: '4px 10px',
+                      borderRadius: 20,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6
+                    }}>
+                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: badgeText }} />
+                      {item.statusBadge}
                     </div>
                   </div>
 
-                  {/* Responsive Split Comparison: Pedagang NLP vs Warga Pembeli */}
-                  <div className="dash-split-comparison">
-                    {/* Box Left: KLAIM PEDAGANG (NLP VOICE) */}
-                    <div style={{
-                      background: '#f8fafc',
-                      borderRadius: 10,
-                      padding: 14,
-                      border: '1px solid #e2e8f0',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between'
-                    }}>
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
-                          <span style={{ fontSize: 11, fontWeight: 800, color: '#475569', letterSpacing: '0.03em' }}>
-                            KLAIM PEDAGANG (NLP)
-                          </span>
-                          <span style={{ background: '#0f172a', color: '#ffffff', fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4 }}>
-                            Whisper Conf. 99%
-                          </span>
-                        </div>
-                        <div style={{ fontSize: 22, fontWeight: 800, color: '#0f172a' }}>
-                          Rp {item.hargaNlp.toLocaleString('id-ID')} <span style={{ fontSize: 13, fontWeight: 500, color: '#64748b' }}>/ {item.satuan}</span>
-                        </div>
+                  {/* 3-Pillar Data Row: Klaim Toko vs Laporan Warga vs Standar SSH */}
+                  <div className="dash-triple-stats" style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                    gap: 12,
+                    background: '#f8fafc',
+                    padding: '14px 16px',
+                    borderRadius: 10,
+                    border: '1px solid #e2e8f0',
+                    marginBottom: 14
+                  }}>
+                    {/* Pillar 1: Klaim Pedagang (NLP) */}
+                    <div>
+                      <div style={{ fontSize: 10.5, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span>Klaim Pedagang</span>
+                        <span style={{ fontSize: 9, background: '#e2e8f0', color: '#334155', padding: '1px 5px', borderRadius: 4, fontWeight: 600 }}>NLP</span>
+                      </div>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a' }}>
+                        Rp {item.hargaNlp.toLocaleString('id-ID')}
+                        <span style={{ fontSize: 11, fontWeight: 500, color: '#64748b', marginLeft: 3 }}>/ {item.satuan}</span>
+                      </div>
+                      {/* Audio Play Quick Action */}
+                      <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <button
+                          onClick={() => togglePlayAudio(item.id_laporan, item.transkrip)}
+                          style={{
+                            background: isPlaying ? '#0284c7' : '#ffffff',
+                            color: isPlaying ? '#ffffff' : '#0284c7',
+                            border: '1px solid #bae6fd',
+                            borderRadius: 6,
+                            padding: '3px 9px',
+                            fontSize: 10.5,
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4
+                          }}
+                          title="Klik untuk mendengarkan verifikasi suara pedagang"
+                        >
+                          {isPlaying ? <><IconPause size={12} style={{ marginRight: 4 }} /><span>Jeda</span></> : <><IconPlay size={12} style={{ marginRight: 4 }} /><span>Putar Audio</span></>}
+                        </button>
+                        <span
+                          style={{ fontSize: 10.5, color: '#64748b', fontStyle: 'italic', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                          title={item.transkrip}
+                        >
+                          "{item.transkrip}"
+                        </span>
+                      </div>
+                    </div>
 
-                        {/* Interactive Audio Player Bar */}
-                        <div style={{
-                          marginTop: 10,
-                          background: '#ffffff',
-                          border: '1px solid #e2e8f0',
-                          borderRadius: 8,
-                          padding: '6px 10px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 8
-                        }}>
+                    {/* Pillar 2: Laporan Warga */}
+                    <div>
+                      <div style={{ fontSize: 10.5, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span>Laporan Pembeli</span>
+                        <span style={{ fontSize: 9.5, color: '#94a3b8' }}>({item.pelapor})</span>
+                      </div>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: item.isAnomali ? '#dc2626' : '#0f172a' }}>
+                        Rp {item.hargaPembeli.toLocaleString('id-ID')}
+                        <span style={{ fontSize: 11, fontWeight: 500, color: item.isAnomali ? '#b91c1c' : '#64748b', marginLeft: 3 }}>/ {item.satuan}</span>
+                      </div>
+                      {/* Nota Bukti Quick Action */}
+                      <div style={{ marginTop: 8 }}>
+                        {item.foto_url ? (
                           <button
-                            onClick={() => togglePlayAudio(item.id_laporan, item.transkrip)}
-                            title={isPlaying ? 'Jeda' : 'Putar rekaman'}
+                            onClick={() => setFotoModal(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}${item.foto_url}`)}
                             style={{
-                              background: '#0284c7',
-                              color: '#ffffff',
-                              border: 'none',
-                              borderRadius: '50%',
-                              width: 26,
-                              height: 26,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
+                              background: '#ffffff',
+                              border: '1px solid #cbd5e1',
+                              borderRadius: 6,
+                              padding: '3px 9px',
+                              fontSize: 10.5,
+                              fontWeight: 700,
+                              color: '#334155',
                               cursor: 'pointer',
-                              fontSize: 11,
-                              flexShrink: 0
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 4
                             }}
                           >
-                            {isPlaying ? 'Jeda' : 'Putar'}
+                            <IconCamera size={13} style={{ marginRight: 4 }} /><span>Lihat Nota / Struk</span>
                           </button>
-                          {/* Audio Waveform Bars */}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 3, flex: 1, height: 18, overflow: 'hidden' }}>
-                            {[6, 12, 18, 14, 8, 16, 10, 14, 6, 10, 15, 18, 12, 8, 14].map((h, i) => (
-                              <span
-                                key={i}
-                                style={{
-                                  width: 3,
-                                  height: isPlaying ? `${Math.max(4, (h * (audioProgress + 1)) % 18 + 4)}px` : `${h}px`,
-                                  background: isPlaying ? '#0284c7' : '#38bdf8',
-                                  borderRadius: 2,
-                                  transition: 'height 0.15s ease',
-                                  flexShrink: 0
-                                }}
-                              />
-                            ))}
-                          </div>
-                          <span style={{ fontSize: 11, color: '#64748b', fontWeight: 600 }}>0:04</span>
-                        </div>
-
-                        <p style={{
-                          margin: '10px 0 0',
-                          fontSize: 11.5,
-                          color: '#475569',
-                          fontStyle: 'italic',
-                          background: '#ffffff',
-                          padding: '8px 10px',
-                          borderRadius: 6,
-                          border: '1px dashed #cbd5e1',
-                          lineHeight: 1.45
-                        }}>
-                          {item.transkrip}
-                        </p>
-                      </div>
-
-                      <div style={{ marginTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 10.5, color: '#64748b', flexWrap: 'wrap', gap: 4 }}>
-                        <span>Input: {formatWaktu(item.waktuNlp)}</span>
-                        <span style={{ color: '#0d9488', fontWeight: 700 }}>Sah Terverifikasi</span>
+                        ) : (
+                          <span style={{ fontSize: 10.5, color: '#94a3b8' }}>Tanpa lampiran foto</span>
+                        )}
                       </div>
                     </div>
 
-                    {/* Box Right: LAPORAN PEMBELI (WARGA) - TANPA BUKTI STRUK */}
-                    <div style={{
-                      background: item.isKlirStatus ? '#f8fafc' : item.isAnomali ? '#fef2f2' : item.isModerat ? '#fffbeb' : '#f8fafc',
-                      borderRadius: 10,
-                      padding: 14,
-                      border: item.isKlirStatus ? '1px solid #e2e8f0' : item.isAnomali ? '1px solid #fee2e2' : item.isModerat ? '1px solid #fef3c7' : '1px solid #e2e8f0',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between'
-                    }}>
-                      <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 6 }}>
-                          <span style={{ fontSize: 11, fontWeight: 800, color: item.isAnomali ? '#991b1b' : item.isModerat ? '#b45309' : '#0369a1', letterSpacing: '0.03em' }}>
-                            LAPORAN PEMBELI (WARGA)
-                          </span>
-                          <span style={{
-                            background: item.isKlirStatus ? '#dcfce7' : item.isAnomali ? '#fee2e2' : item.isModerat ? '#fef3c7' : '#e0f2fe',
-                            color: item.isKlirStatus ? '#15803d' : item.isAnomali ? '#b91c1c' : item.isModerat ? '#b45309' : '#0369a1',
-                            border: item.isKlirStatus ? '1px solid #bbf7d0' : item.isAnomali ? '1px solid #fca5a5' : item.isModerat ? '1px solid #fde68a' : '1px solid #bae6fd',
-                            fontSize: 10,
-                            fontWeight: 700,
-                            padding: '2px 7px',
-                            borderRadius: 4
-                          }}>
-                            {item.isKlirStatus ? '● Laporan Selesai' : item.isAnomali ? '● Perlu Verifikasi' : '● Laporan Terdata'}
-                          </span>
-                        </div>
-                        <div style={{ fontSize: 22, fontWeight: 800, color: item.isAnomali ? '#dc2626' : item.isModerat ? '#d97706' : '#0f172a' }}>
-                          Rp {item.hargaPembeli.toLocaleString('id-ID')} <span style={{ fontSize: 13, fontWeight: 500, color: item.isAnomali ? '#991b1b' : '#64748b' }}>/ {item.satuan}</span>
-                        </div>
-
-                        {/* Rincian Laporan Harga Warga */}
-                        <div style={{
-                          marginTop: 10,
-                          background: '#ffffff',
-                          borderRadius: 8,
-                          border: item.isAnomali ? '1px solid #fecaca' : '1px solid #e2e8f0',
-                          padding: '10px 12px',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: 6
-                        }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11 }}>
-                            <span style={{ color: '#64748b' }}>Komoditas Material:</span>
-                            <strong style={{ color: '#0f172a' }}>{item.nama_material}</strong>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11 }}>
-                            <span style={{ color: '#64748b' }}>Toko Sasaran:</span>
-                            <span style={{ color: '#0f172a', fontWeight: 600 }}>{item.nama_toko}</span>
-                          </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 11 }}>
-                            <span style={{ color: '#64748b' }}>Status Audit:</span>
-                            <span style={{
-                              color: item.statusDb === 'Selesai' ? '#15803d' : item.statusDb === 'Tindak Lanjut' ? '#ea580c' : '#0284c7',
-                              fontWeight: 700
-                            }}>
-                              {item.statusDb === 'Selesai' ? 'Sah Terverifikasi PU' : item.statusDb === 'Tindak Lanjut' ? 'Dalam Tindak Lanjut' : 'Tercatat di Portal Warga'}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Bukti Foto Nota / Struk Pembeli */}
-                        {item.foto_url ? (
-                          <div style={{
-                            marginTop: 10,
-                            background: '#ffffff',
-                            borderRadius: 8,
-                            border: '1px solid #cbd5e1',
-                            padding: '8px 10px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            gap: 10
-                          }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, overflow: 'hidden' }}>
-                              <button
-                                onClick={() => setFotoModal(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}${item.foto_url}`)}
-                                title="Klik untuk memperbesar bukti foto"
-                                style={{
-                                  position: 'relative',
-                                  width: 44,
-                                  height: 44,
-                                  borderRadius: 6,
-                                  overflow: 'hidden',
-                                  border: '2px solid #0284c7',
-                                  cursor: 'pointer',
-                                  flexShrink: 0,
-                                  background: '#f1f5f9',
-                                  padding: 0
-                                }}
-                              >
-                                <img
-                                  src={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}${item.foto_url}`}
-                                  alt="Bukti foto nota"
-                                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                                />
-                                <div style={{
-                                  position: 'absolute',
-                                  inset: 0,
-                                  background: 'rgba(0,0,0,0.25)',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  color: '#ffffff',
-                                  fontSize: 10
-                                }}>
-                                  🔍
-                                </div>
-                              </button>
-                              <div>
-                                <div style={{ fontSize: 11, fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                  <span>🧾</span> Bukti Foto Terlampir
-                                </div>
-                                <div style={{ fontSize: 10, color: '#64748b', marginTop: 1 }}>
-                                  Nota / Struk Pembelian Toko
-                                </div>
-                              </div>
-                            </div>
-
-                            <button
-                              onClick={() => setFotoModal(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}${item.foto_url}`)}
-                              style={{
-                                background: '#f0f9ff',
-                                color: '#0284c7',
-                                border: '1px solid #bae6fd',
-                                borderRadius: 6,
-                                padding: '4px 9px',
-                                fontSize: 11,
-                                fontWeight: 700,
-                                cursor: 'pointer',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 4,
-                                flexShrink: 0
-                              }}
-                            >
-                              <span>👁️</span> Lihat Foto
-                            </button>
-                          </div>
-                        ) : (
-                          <div style={{
-                            marginTop: 10,
-                            background: '#ffffff',
-                            borderRadius: 8,
-                            border: '1px dashed #cbd5e1',
-                            padding: '8px 10px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 8,
-                            fontSize: 11,
-                            color: '#94a3b8'
-                          }}>
-                            <span style={{ fontSize: 14 }}>📷</span>
-                            <span>Tidak ada bukti foto dilampirkan</span>
-                          </div>
-                        )}
+                    {/* Pillar 3: Standar Acuan SSH & Selisih Disparitas */}
+                    <div>
+                      <div style={{ fontSize: 10.5, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 }}>
+                        Standar SSH PU & Selisih
                       </div>
-
-                      <div style={{ marginTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 10.5, color: item.isAnomali ? '#991b1b' : '#64748b', flexWrap: 'wrap', gap: 4 }}>
-                        <span>Pelapor: {item.pelapor}</span>
-                        <span style={{ fontWeight: 600 }}>Dilaporkan: {formatWaktu(item.tanggal_laporan)}</span>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                        <span style={{
+                          fontSize: 17,
+                          fontWeight: 800,
+                          color: item.isKlirStatus ? '#059669' : item.isAnomali ? '#dc2626' : '#d97706'
+                        }}>
+                          {item.selisih >= 0 ? `+Rp ${item.selisih.toLocaleString('id-ID')}` : `-Rp ${Math.abs(item.selisih).toLocaleString('id-ID')}`}
+                        </span>
+                        <span style={{
+                          fontSize: 10.5,
+                          fontWeight: 800,
+                          padding: '1px 6px',
+                          borderRadius: 4,
+                          background: item.isKlirStatus ? '#dcfce7' : item.isAnomali ? '#fee2e2' : '#fef3c7',
+                          color: item.isKlirStatus ? '#15803d' : item.isAnomali ? '#b91c1c' : '#b45309'
+                        }}>
+                          {item.selisihPersen >= 0 ? `+${item.selisihPersen}` : item.selisihPersen}%
+                        </span>
+                      </div>
+                      <div style={{ fontSize: 11, color: '#64748b', marginTop: 8 }}>
+                        Pagu Acuan: <strong style={{ color: '#0f172a' }}>Rp {item.harga_ssh ? item.harga_ssh.toLocaleString('id-ID') : item.hargaNlp.toLocaleString('id-ID')}</strong>
                       </div>
                     </div>
                   </div>
 
-                  {/* Disparity Alert Banner */}
+                  {/* Card Footer: Metadata & Clean Contextual Actions */}
                   <div style={{
-                    background: item.isKlirStatus ? '#f0fdf4' : item.isAnomali ? '#fff1f2' : item.isModerat ? '#fffbeb' : '#f0fdf4',
-                    border: item.isKlirStatus ? '1px solid #dcfce7' : item.isAnomali ? '1px solid #ffe4e6' : item.isModerat ? '1px solid #fef3c7' : '1px solid #dcfce7',
-                    borderRadius: 8,
-                    padding: '10px 12px',
-                    margin: '14px 0',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     flexWrap: 'wrap',
-                    gap: 8
+                    gap: 10,
+                    paddingTop: 8,
+                    borderTop: '1px solid #f1f5f9'
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 240 }}>
-                      <div>
-                        <div style={{
-                          fontSize: 12,
-                          fontWeight: 800,
-                          color: item.isKlirStatus ? '#15803d' : item.isAnomali ? '#be123c' : item.isModerat ? '#b45309' : '#15803d'
-                        }}>
-                          Selisih Disparitas: {item.selisih >= 0 ? `+Rp ${item.selisih.toLocaleString('id-ID')}` : `-Rp ${Math.abs(item.selisih).toLocaleString('id-ID')}`} ({item.selisihPersen >= 0 ? `+${item.selisihPersen}` : item.selisihPersen}% {item.isKlirStatus ? 'Klir & Selesai' : item.isAnomali ? 'Deviasi Tidak Wajar' : item.isModerat ? 'Toleransi Regional' : 'Klir & Sesuai'})
-                        </div>
-                        <div style={{
-                          fontSize: 11,
-                          color: item.isKlirStatus ? '#166534' : item.isAnomali ? '#9f1239' : item.isModerat ? '#92400e' : '#166534',
-                          marginTop: 1
-                        }}>
-                          {item.isAnomali
-                            ? 'Melebihi toleransi regional PU (Maks. 5.0%). Indikasi markup harga eceran.'
-                            : item.isModerat
-                            ? 'Perbedaan dalam batas wajar toleransi radius armada toko dari lokasi proyek.'
-                            : 'Harga selaras dengan standar acuan SSH PU Kabupaten Lamongan.'}
-                        </div>
-                      </div>
+                    <div style={{ fontSize: 11, color: '#64748b' }}>
+                      Dilaporkan: <strong style={{ color: '#334155' }}>{formatWaktu(item.tanggal_laporan)}</strong>
                     </div>
-                    <div style={{
-                      fontSize: 11,
-                      fontWeight: 700,
-                      color: '#475569',
-                      background: '#ffffff',
-                      padding: '3px 8px',
-                      borderRadius: 6,
-                      border: item.isKlirStatus ? '1px solid #bbf7d0' : item.isAnomali ? '1px solid #fecdd3' : item.isModerat ? '1px solid #fde68a' : '1px solid #bbf7d0',
-                      flexShrink: 0
-                    }}>
-                      Pagu Standar: Rp {item.harga_ssh ? item.harga_ssh.toLocaleString('id-ID') : item.hargaNlp.toLocaleString('id-ID')}
-                    </div>
-                  </div>
 
-                  {/* Footer Tools & Action Buttons Responsive */}
-                  <div className="dash-card-footer">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, flexWrap: 'wrap' }}>
-                      <span style={{ color: '#64748b', fontWeight: 600 }}>Alat:</span>
-                      <button
-                        onClick={() => {
-                          setModalData({
-                            toko: item.nama_toko,
-                            material: item.nama_material,
-                            harga: item.hargaNlp,
-                            satuan: item.satuan,
-                            transkrip: item.transkrip,
-                            kecamatan: item.nama_kecamatan
-                          })
-                          setModalType('suara')
-                          togglePlayAudio('modal', item.transkrip)
-                        }}
-                        style={{
-                          background: '#ffffff',
-                          border: '1px solid #0284c7',
-                          borderRadius: 6,
-                          padding: '5px 12px',
-                          fontSize: 11,
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {isResolved ? (
+                        <span style={{
+                          fontSize: 11.5,
+                          color: '#059669',
                           fontWeight: 700,
-                          color: '#0284c7',
-                          cursor: 'pointer',
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: 5
-                        }}
-                      >
-                        🔊 Dengar Suara NLP
-                      </button>
-
-                      {item.foto_url && (
+                          gap: 5,
+                          background: '#ecfdf5',
+                          padding: '5px 12px',
+                          borderRadius: 6,
+                          border: '1px solid #a7f3d0'
+                        }}>
+                          <IconCheck size={13} style={{ marginRight: 4 }} /><span>Kasus Ditutup & Terverifikasi</span>
+                        </span>
+                      ) : item.isKlirStatus ? (
                         <button
-                          onClick={() => setFotoModal(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}${item.foto_url}`)}
+                          onClick={() => handleTutupKasus(item.id_laporan, item.nama_toko)}
                           style={{
                             background: '#ffffff',
-                            border: '1px solid #059669',
+                            color: '#166534',
+                            border: '1px solid #86efac',
                             borderRadius: 6,
-                            padding: '5px 12px',
-                            fontSize: 11,
+                            padding: '6px 14px',
+                            fontSize: 11.5,
                             fontWeight: 700,
-                            color: '#059669',
                             cursor: 'pointer',
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: 5
+                            gap: 4
                           }}
                         >
-                          🧾 Bukti Foto Nota
+                          <IconCheck size={13} style={{ marginRight: 4 }} /><span>Tandai Selesai / Arsipkan</span>
                         </button>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => handleTutupKasus(item.id_laporan, item.nama_toko)}
+                            style={{
+                              background: '#ffffff',
+                              color: '#64748b',
+                              border: '1px solid #cbd5e1',
+                              borderRadius: 6,
+                              padding: '6px 12px',
+                              fontSize: 11.5,
+                              fontWeight: 600,
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Tutup Kasus
+                          </button>
+                          <button
+                            onClick={() => {
+                              setModalData({
+                                id_laporan: item.id_laporan,
+                                toko: item.nama_toko,
+                                material: item.nama_material,
+                                selisih: item.selisih,
+                                persentase: item.selisihPersen,
+                                kecamatan: item.nama_kecamatan
+                              })
+                              setModalType('teguran')
+                            }}
+                            style={{
+                              background: '#fff7ed',
+                              color: '#c2410c',
+                              border: '1px solid #fed7aa',
+                              borderRadius: 6,
+                              padding: '6px 12px',
+                              fontSize: 11.5,
+                              fontWeight: 700,
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Kirim Teguran
+                          </button>
+                          <button
+                            onClick={() => {
+                              setModalData({
+                                id_laporan: item.id_laporan,
+                                toko: item.nama_toko,
+                                material: item.nama_material,
+                                kecamatan: item.nama_kecamatan
+                              })
+                              setModalType('disposisi')
+                            }}
+                            style={{
+                              background: '#0f172a',
+                              color: '#ffffff',
+                              border: 'none',
+                              borderRadius: 6,
+                              padding: '6px 14px',
+                              fontSize: 11.5,
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                            }}
+                          >
+                            Tugaskan Sidak
+                          </button>
+                        </>
                       )}
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                      <button
-                        onClick={() => handleTutupKasus(item.id_laporan, item.nama_toko)}
-                        disabled={item.statusDb === 'Selesai'}
-                        style={{
-                          background: item.statusDb === 'Selesai' ? '#f1f5f9' : '#ffffff',
-                          color: item.statusDb === 'Selesai' ? '#94a3b8' : '#475569',
-                          border: '1px solid #cbd5e1',
-                          borderRadius: 6,
-                          padding: '6px 12px',
-                          fontSize: 11.5,
-                          fontWeight: 700,
-                          cursor: item.statusDb === 'Selesai' ? 'default' : 'pointer'
-                        }}
-                      >
-                        {item.statusDb === 'Selesai' ? 'Kasus Ditutup' : 'Tutup Kasus'}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setModalData({
-                            id_laporan: item.id_laporan,
-                            toko: item.nama_toko,
-                            material: item.nama_material,
-                            selisih: item.selisih,
-                            persentase: item.selisihPersen,
-                            kecamatan: item.nama_kecamatan
-                          })
-                          setModalType('teguran')
-                        }}
-                        style={{
-                          background: 'linear-gradient(135deg, #f59e0b, #ea580c)',
-                          color: '#ffffff',
-                          border: 'none',
-                          borderRadius: 6,
-                          padding: '6px 12px',
-                          fontSize: 11.5,
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          boxShadow: '0 2px 4px rgba(234, 88, 12, 0.25)'
-                        }}
-                      >
-                        Kirim Teguran
-                      </button>
-                      <button
-                        onClick={() => {
-                          setModalData({
-                            id_laporan: item.id_laporan,
-                            toko: item.nama_toko,
-                            material: item.nama_material,
-                            kecamatan: item.nama_kecamatan
-                          })
-                          setModalType('disposisi')
-                        }}
-                        style={{
-                          background: '#0f172a',
-                          color: '#ffffff',
-                          border: 'none',
-                          borderRadius: 6,
-                          padding: '6px 12px',
-                          fontSize: 11.5,
-                          fontWeight: 700,
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Tugaskan Petugas
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -1585,7 +1388,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <Link to="/admin/peta" style={{ fontSize: 11.5, fontWeight: 700, textDecoration: 'none', color: '#0284c7' }}>
-                  Buka Peta Lengkap →
+                  Buka Peta Lengkap
                 </Link>
               </div>
 
@@ -1675,19 +1478,19 @@ export default function AdminDashboard() {
               {/* 4 Status Zone Cards Row: Hijau, Kuning, Merah, Abu-abu */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 5, marginBottom: 14 }}>
                 <div style={{ background: '#dcfce7', borderRadius: 6, padding: '7px 3px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: '#166534' }}>● Hijau</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#166534', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}><span style={{ width: 6, height: 6, borderRadius: '50%', background: '#166534' }} />Hijau</div>
                   <div style={{ fontSize: 10, color: '#15803d', marginTop: 1, fontWeight: 800 }}>{zoneCount.normal} Kec</div>
                 </div>
                 <div style={{ background: '#fef3c7', borderRadius: 6, padding: '7px 3px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: '#92400e' }}>● Kuning</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#92400e', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}><span style={{ width: 6, height: 6, borderRadius: '50%', background: '#d97706' }} />Kuning</div>
                   <div style={{ fontSize: 10, color: '#b45309', marginTop: 1, fontWeight: 800 }}>{zoneCount.waspada} Kec</div>
                 </div>
                 <div style={{ background: '#fee2e2', borderRadius: 6, padding: '7px 3px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: '#991b1b' }}>● Merah</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#991b1b', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}><span style={{ width: 6, height: 6, borderRadius: '50%', background: '#dc2626' }} />Merah</div>
                   <div style={{ fontSize: 10, color: '#b91c1c', marginTop: 1, fontWeight: 800 }}>{zoneCount.merah} Kec</div>
                 </div>
                 <div style={{ background: '#f1f5f9', borderRadius: 6, padding: '7px 3px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: '#475569' }}>● Abu</div>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}><span style={{ width: 6, height: 6, borderRadius: '50%', background: '#64748b' }} />Abu</div>
                   <div style={{ fontSize: 10, color: '#334155', marginTop: 1, fontWeight: 800 }}>{zoneCount.stabil} Kec</div>
                 </div>
               </div>
@@ -1892,7 +1695,7 @@ export default function AdminDashboard() {
                   ● Sesi: {verifikasiStats.pending > 0 ? `${verifikasiStats.pending} Perlu Audit` : 'Normal (Klir)'}
                 </span>
                 <Link to="/admin/verifikasi" style={{ color: '#0284c7', textDecoration: 'none', fontWeight: 700 }}>
-                  Lihat Log →
+                  Lihat Log
                 </Link>
               </div>
             </div>
@@ -2070,17 +1873,14 @@ export default function AdminDashboard() {
                     fontSize: 12.5,
                     fontWeight: 700,
                     cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 7,
                     boxShadow: '0 4px 12px rgba(2, 132, 199, 0.35)',
                     transition: 'transform 0.1s ease'
                   }}
                 >
                   {(playingAudioId === 'modal' || (modalData?.id_laporan && playingAudioId === modalData.id_laporan)) ? (
-                    <>⏸ Jeda Suara</>
+                    'Jeda Suara'
                   ) : (
-                    <>▶ Putar Suara Rekaman NLP</>
+                    'Putar Suara Rekaman NLP'
                   )}
                 </button>
               </div>
@@ -2090,7 +1890,7 @@ export default function AdminDashboard() {
                 <span>Model: <strong>Whisper-v3 Regional</strong></span>
                 <span>
                   Status Suara: <strong style={{ color: (playingAudioId === 'modal' || (modalData?.id_laporan && playingAudioId === modalData.id_laporan)) ? '#38bdf8' : '#94a3b8' }}>
-                    {(playingAudioId === 'modal' || (modalData?.id_laporan && playingAudioId === modalData.id_laporan)) ? '🔊 Aktif Bersuara' : 'Siap Diuji'}
+                    {(playingAudioId === 'modal' || (modalData?.id_laporan && playingAudioId === modalData.id_laporan)) ? 'Aktif Bersuara' : 'Siap Diuji'}
                   </strong>
                 </span>
                 <span>Confidence: <strong>99.1%</strong></span>
@@ -2234,7 +2034,6 @@ export default function AdminDashboard() {
               alignItems: 'center'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 16 }}>🧾</span>
                 <span style={{ fontSize: 13, fontWeight: 700 }}>Bukti Fisik Verifikasi (Nota / Struk Pembelian)</span>
               </div>
               <button
@@ -2250,7 +2049,7 @@ export default function AdminDashboard() {
                   cursor: 'pointer'
                 }}
               >
-                ✕ Tutup
+                Tutup
               </button>
             </div>
             <div style={{ padding: 16, background: '#f8fafc', textAlign: 'center', overflow: 'auto' }}>
